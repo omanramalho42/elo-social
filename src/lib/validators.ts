@@ -99,3 +99,6 @@ export const moderacaoSchema = z.discriminatedUnion("acao", [
 export const gestorSchema = z.object({ email }).strict();
 export const idSchema = z.coerce.number().int().positive().max(2_147_483_647);
 export const confirmarExclusaoSchema = z.object({ confirmar: z.literal(true) }).strict();
+
+// Código enviado pelo Supabase no link de recuperação (fluxo PKCE).
+export const confirmarRecuperacaoSchema = z.object({ codigo: z.string().trim().min(8).max(2048) }).strict();

@@ -2,7 +2,7 @@ import { ok, rota } from "@/lib/http";
 import { supabaseDoUsuario } from "@/lib/supabase/server";
 import { AREAS, filtroOngsSchema } from "@/lib/validators";
 
-const CAMPOS = "id, nome, bairro, area, descricao, lat, lon, verificacao, projetos(count)";
+const CAMPOS = "id, nome, bairro, area, descricao, site, lat, lon, verificacao, projetos(count)";
 const semAcento = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 // AJUSTE FACIL PARA A APRESENTACAO:

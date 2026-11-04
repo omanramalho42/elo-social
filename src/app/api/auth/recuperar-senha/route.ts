@@ -1,4 +1,4 @@
-import { ipDe, lerJson, ok, rota } from "@/lib/http";
+import { ApiError, ipDe, lerJson, ok, rota } from "@/lib/http";
 import { limitar } from "@/lib/ratelimit";
 import { supabaseDoUsuario } from "@/lib/supabase/server";
 import { recuperarSenhaSchema } from "@/lib/validators";
@@ -7,7 +7,11 @@ import { recuperarSenhaSchema } from "@/lib/validators";
 export const POST = rota(async (req) => {
   limitar(`recuperar:${ipDe(req)}`, 5, 60 * 60 * 1000);
   const { email } = recuperarSenhaSchema.parse(await lerJson(req));
-  await supabaseDoUsuario().auth.resetPasswordForEmail(email, { redirectTo: `${process.env.SITE_URL}/redefinir-senha` });
+  const enderecoFrontend = process.env.FRONTEND_URL || process.env.SITE_URL;
+  const { error } = await supabaseDoUsuario().auth.resetPasswordForEmail(email, {
+    redirectTo: `${enderecoFrontend}/redefinir-senha`,
+  });
+  if (error) throw new ApiError(503, "Não foi possível enviar as instruções agora. Tente novamente mais tarde.");
   return ok({ mensagem: "Se o e-mail estiver cadastrado, enviamos as instruções de recuperação." });
 });
 

@@ -56,3 +56,16 @@ Erros: `{ "erro": "...", "detalhes": [...] }` (422 validação, 401 sem login, 4
 - A posição no mapa é definida pela equipe ao publicar (sem geocodificação).
 - O envio do e-mail de recuperação depende de configurar o e-mail no Supabase.
 - Dados do `seed.sql` são demonstrativos (posições aproximadas).
+
+## Frontend React + Vite
+
+As telas ficam em `frontend/`. O backend permanece nesta raiz.
+
+1. Configure `.env.local` na raiz (nunca copie a service_role para o frontend).
+2. Na raiz, instale com `npm ci` e execute `npm run dev -- --port 3000`.
+3. Em outro terminal: `cd frontend`, `npm ci` e `npm run dev`.
+4. Abra http://127.0.0.1:5173.
+
+O Vite encaminha `/api` para a API local. Para publicar, é necessário configurar esse encaminhamento no ambiente de hospedagem.
+
+Consulte `GUIA-FRONTEND.md` para a explicação dos arquivos, roteiro de estudo e limites da entrega.

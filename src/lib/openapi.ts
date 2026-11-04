@@ -83,7 +83,18 @@ export const openapi = {
         tags: ["Cadastro e sessão"], summary: "Esqueci minha senha",
         description: "Envia o e-mail de recuperação. A resposta é sempre a mesma, exista ou não o e-mail.",
         requestBody: corpo("RecuperarSenha", { email: "maria@exemplo.org" }),
-        responses: { 200: { description: "Instruções enviadas (se o e-mail existir)", content: json("Mensagem") }, 429: erro("Muitas tentativas") },
+        responses: { 200: { description: "Instruções enviadas (se o e-mail existir)", content: json("Mensagem") }, 503: erro("Serviço de envio indisponível"), 429: erro("Muitas tentativas") },
+      },
+    },
+    "/api/auth/confirmar-recuperacao": {
+      post: {
+        tags: ["Cadastro e sessão"], summary: "Confirmar link de recuperação",
+        description: "Troca o código PKCE de uso único pelo cookie de sessão. Deve usar o navegador que solicitou o e-mail.",
+        requestBody: { required: true, content: { "application/json": { schema: {
+          type: "object", required: ["codigo"], additionalProperties: false,
+          properties: { codigo: { type: "string", minLength: 8, maxLength: 2048 } }
+        } } } },
+        responses: { 200: { description: "Sessão estabelecida", content: json("Mensagem") }, 400: erro("Link inválido ou expirado"), 422: erro("Código inválido"), 429: erro("Muitas tentativas") },
       },
     },
     "/api/auth/redefinir-senha": {

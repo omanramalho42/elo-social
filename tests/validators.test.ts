@@ -61,3 +61,13 @@ test("moderação: aprovar exige posição em Fortaleza; rejeitar exige motivo",
   assert.equal(moderacaoSchema.safeParse({ acao: "aprovar", lat: 10, lon: 10 }).success, false);
   assert.equal(moderacaoSchema.safeParse({ acao: "rejeitar" }).success, false);
 });
+
+import { confirmarRecuperacaoSchema } from "../src/lib/validators";
+
+test("recuperação: exige código e rejeita campos de credenciais extras", () => {
+  assert.equal(confirmarRecuperacaoSchema.safeParse({ codigo: "" }).success, false);
+  assert.equal(confirmarRecuperacaoSchema.safeParse({ codigo: "123" }).success, false);
+  assert.equal(confirmarRecuperacaoSchema.safeParse({ codigo: "a".repeat(2049) }).success, false);
+  assert.equal(confirmarRecuperacaoSchema.safeParse({ codigo: "codigo-de-teste", senha: "outra" }).success, false);
+  assert.equal(confirmarRecuperacaoSchema.safeParse({ codigo: "codigo-de-teste" }).success, true);
+});

@@ -8,7 +8,8 @@ export const POST = rota(async (req) => {
   const { senha } = redefinirSenhaSchema.parse(await lerJson(req));
   const { error } = await supabase.auth.updateUser({ password: senha });
   if (error) throw new ApiError(400, "Não foi possível alterar a senha.");
-  return ok({ mensagem: "Senha alterada." });
+  await supabase.auth.signOut({ scope: "local" });
+  return ok({ mensagem: "Senha alterada. Entre novamente com a nova senha." });
 });
 
 export const dynamic = "force-dynamic";

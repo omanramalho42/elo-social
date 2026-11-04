@@ -9,15 +9,13 @@ export const POST = rota(async (req) => {
   const d = cadastroOngSchema.parse(await lerJson(req));
   const admin = supabaseAdmin();
 
-  if (d.cnpj) {
-    const { data: existente } = await admin.from("ongs").select("id").eq("cnpj", d.cnpj).maybeSingle();
-    if (existente) throw new ApiError(409, "Já existe um cadastro com esse CNPJ.");
-  }
+  const { data: existente } = await admin.from("ongs").select("id").eq("cnpj", d.cnpj).maybeSingle();
+  if (existente) throw new ApiError(409, "Já existe um cadastro com esse CNPJ.");
 
   const { data: ong, error } = await admin
     .from("ongs")
     .insert({
-      nome: d.nome, cnpj: d.cnpj ?? null, descricao: d.descricao, area: d.area, bairro: d.bairro,
+      nome: d.nome, cnpj: d.cnpj, descricao: d.descricao, area: d.area, bairro: d.bairro,
       endereco: d.endereco ?? null, contato: d.contato, site: d.site ?? null,
     })
     .select("id")

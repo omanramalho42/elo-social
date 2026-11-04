@@ -676,14 +676,14 @@ function Request() {
               maxLength={120}
             />
             <Field errors={fieldErrors}
-              label="CNPJ (opcional)"
+              label="CNPJ"
               name="cnpj"
               values={v}
               setValues={setV}
               placeholder="00.000.000/0000-00"
               inputMode="numeric"
+              minLength={14}
               maxLength={18}
-              required={false}
             />
             <Field errors={fieldErrors}
               label="Área de atuação"

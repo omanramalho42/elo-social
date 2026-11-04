@@ -15,12 +15,14 @@ test("CNPJ: aceita válido e rejeita inválido/repetido", () => {
   assert.equal(cnpjValido("11111111111111"), false);
 });
 
-test("cadastro de ONG: campos opcionais vazios são aceitos e o CNPJ é normalizado", () => {
+test("cadastro de ONG: campos opcionais vazios são aceitos, o CNPJ é obrigatório e normalizado", () => {
   const r = cadastroOngSchema.parse(pedido);
   assert.equal(r.cnpj, "11222333000181");
   assert.equal(r.endereco, undefined);
   assert.equal(r.site, undefined);
-  assert.equal(cadastroOngSchema.safeParse({ ...pedido, cnpj: "" }).success, true); // CNPJ é opcional
+  assert.equal(cadastroOngSchema.safeParse({ ...pedido, cnpj: "" }).success, false); // CNPJ é obrigatório
+  const { cnpj: _semCnpj, ...semCnpj } = pedido;
+  assert.equal(cadastroOngSchema.safeParse(semCnpj).success, false);
 });
 
 test("cadastro de ONG: rejeita CNPJ inválido, área inválida, site estranho e campo extra", () => {

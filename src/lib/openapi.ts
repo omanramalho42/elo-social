@@ -207,9 +207,9 @@ export const openapi = {
       Eu: { type: "object", properties: { email: { type: "string" }, nome: { type: "string", nullable: true }, telefone: { type: "string", nullable: true }, papel: { type: "string", enum: ["ong", "admin"] }, ongVinculadaId: { type: "integer", nullable: true } } },
       CadastroOng: {
         type: "object", additionalProperties: false,
-        required: ["nome", "descricao", "area", "bairro", "responsavel", "contato", "referencias"],
+        required: ["nome", "cnpj", "descricao", "area", "bairro", "responsavel", "contato", "referencias"],
         properties: {
-          nome: { type: "string", minLength: 3, maxLength: 120 }, cnpj: { type: "string", description: "Opcional. CNPJ válido, com ou sem máscara" },
+          nome: { type: "string", minLength: 3, maxLength: 120 }, cnpj: { type: "string", description: "Obrigatório. CNPJ válido, com ou sem máscara" },
           descricao: { type: "string", minLength: 20, maxLength: 1000 }, area: { type: "string", enum: AREAS },
           bairro: { type: "string", minLength: 2, maxLength: 80 }, endereco: { type: "string", maxLength: 200, description: "Opcional (endereço público)" },
           responsavel: { type: "string", minLength: 3, maxLength: 120 }, contato: { type: "string", minLength: 5, maxLength: 120 },

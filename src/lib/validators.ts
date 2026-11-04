@@ -17,7 +17,14 @@ const site = z
   .trim()
   .max(200)
   .regex(/^(https?:\/\/[^\s]+|@[A-Za-z0-9_.]{2,50})$/, "Use um link (https://...) ou um @perfil");
-const cnpj = z.string().refine(cnpjValido, "CNPJ inválido").transform(limparCnpj);
+const cnpj = z
+  .string({ required_error: "Informe o CNPJ", invalid_type_error: "Informe o CNPJ" })
+  .trim()
+  .superRefine((valor, ctx) => {
+    if (!valor) ctx.addIssue({ code: "custom", message: "Informe o CNPJ" });
+    else if (!cnpjValido(valor)) ctx.addIssue({ code: "custom", message: "CNPJ inválido" });
+  })
+  .transform(limparCnpj);
 const email = z.string().trim().toLowerCase().email().max(254);
 const senha = z
   .string()
@@ -30,7 +37,7 @@ const senha = z
 export const cadastroOngSchema = z
   .object({
     nome: texto(3, 120),
-    cnpj: opcional(cnpj),
+    cnpj, // obrigatório
     descricao: texto(20, 1000),
     area: z.enum(AREAS),
     bairro: texto(2, 80),

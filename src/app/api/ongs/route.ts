@@ -1,18 +1,20 @@
-import { ok, rota } from "@/lib/http";
-import { supabaseDoUsuario } from "@/lib/supabase/server";
-import { AREAS, filtroOngsSchema } from "@/lib/validators";
+import { ok, rota } from "@/biblioteca/http";
+import { supabaseDoUsuario } from "@/biblioteca/supabase/servidor";
+import { AREAS, filtroOngsSchema } from "@/biblioteca/validacoes";
 
-const CAMPOS = "id, nome, bairro, area, descricao, site, lat, lon, verificacao, projetos(count)";
-const semAcento = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const CAMPOS =
+  "id, nome, bairro, area, descricao, site, lat, lon, verificacao, projetos(count)";
+const semAcento = (t: string) =>
+  t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 // AJUSTE FACIL PARA A APRESENTACAO:
 // true = nomes de A a Z; false = nomes de Z a A.
 const ORDEM_CRESCENTE = true;
 
 // Mapa e catálogo (público). O RLS já garante que só ONGs aprovadas aparecem.
-export const GET = rota(async (req) => {
-  const params = Object.fromEntries(new URL(req.url).searchParams);
-  const { q, area, pagina, limite } = filtroOngsSchema.parse(params);
+export const GET = rota(async (requisicao) => {
+  const parametros = Object.fromEntries(new URL(requisicao.url).searchParams);
+  const { q, area, pagina, limite } = filtroOngsSchema.parse(parametros);
 
   let consulta = supabaseDoUsuario()
     .from("ongs")
@@ -25,19 +27,28 @@ export const GET = rota(async (req) => {
     const termo = q.replace(/[^\p{L}\p{N} ]/gu, "").trim();
     if (termo) {
       const filtros = [`nome.ilike.%${termo}%`, `bairro.ilike.%${termo}%`];
-      for (const a of AREAS) if (semAcento(a).includes(semAcento(termo))) filtros.push(`area.eq.${a}`);
+      for (const a of AREAS)
+        if (semAcento(a).includes(semAcento(termo)))
+          filtros.push(`area.eq.${a}`);
       consulta = consulta.or(filtros.join(","));
     }
   }
 
   const de = (pagina - 1) * limite;
-  const { data, error, count } = await consulta.range(de, de + limite - 1);
-  if (error) throw error;
+  const {
+    data: dados,
+    error: erro,
+    count: total,
+  } = await consulta.range(de, de + limite - 1);
+  if (erro) throw erro;
 
   return ok({
-    total: count ?? 0,
+    total: total ?? 0,
     pagina,
-    ongs: (data ?? []).map(({ projetos, ...ong }) => ({ ...ong, totalProjetos: projetos?.[0]?.count ?? 0 })),
+    ongs: (dados ?? []).map(({ projetos, ...ong }) => ({
+      ...ong,
+      totalProjetos: projetos?.[0]?.count ?? 0,
+    })),
   });
 });
 

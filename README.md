@@ -4,8 +4,8 @@ Plataforma acadêmica para divulgar ONGs e projetos sociais de Fortaleza. O visi
 
 ## Tecnologias
 
-- Frontend: React e Vite.
-- Backend: Next.js, com rotas de API executadas no Node.js.
+- Interface: React e Vite.
+- Servidor: Next.js, com rotas de API executadas no Node.js.
 - Banco de dados: PostgreSQL no Supabase.
 - Autenticação: Supabase Auth.
 - Mapa: Leaflet e OpenStreetMap.
@@ -25,19 +25,19 @@ SITE_URL=http://localhost:3000
 FRONTEND_URL=http://127.0.0.1:5173
 ```
 
-O arquivo `.env.local` é privado e não deve ser enviado ao repositório. As chaves ficam no backend.
+O arquivo `.env.local` é privado e não deve ser enviado ao repositório. As chaves ficam no servidor.
 
-**Terminal 1 — backend, na raiz do projeto:**
+**Terminal 1 — servidor, na raiz do projeto:**
 
 ```sh
 npm ci
 npm run dev -- --port 3000
 ```
 
-**Terminal 2 — frontend:**
+**Terminal 2 — interface:**
 
 ```sh
-cd frontend
+cd interface
 npm ci
 npm run dev
 ```
@@ -46,7 +46,7 @@ Abra [http://127.0.0.1:5173](http://127.0.0.1:5173). Mantenha os dois terminais 
 
 No Windows, `INICIAR-ELOSOCIAL.cmd` também inicia os dois serviços. Não execute o arquivo se os servidores já estiverem abertos.
 
-O Vite encaminha as chamadas `/api` para o backend na porta 3000. Esse encaminhamento está configurado para desenvolvimento local; a hospedagem precisa de configuração equivalente.
+O Vite encaminha as chamadas `/api` para o servidor na porta 3000. Esse encaminhamento está configurado para desenvolvimento local; a hospedagem precisa de configuração equivalente.
 
 ## Banco de dados
 
@@ -54,11 +54,11 @@ Para usar o banco já configurado pela equipe, basta preencher o `.env.local`. N
 
 Em um projeto Supabase novo, execute no SQL Editor, nesta ordem:
 
-1. `supabase/migrations/0001_schema.sql`.
+1. `supabase/migrations/0001_esquema.sql`.
 2. `supabase/migrations/0002_crud_completo.sql`.
 3. Opcionalmente, `supabase/seed.sql`, com os dados demonstrativos.
 
-As instruções para preparar as contas de demonstração estão em `supabase/demo_setup.sql`. O gestor deve estar vinculado a uma ONG para acessar seu painel.
+As instruções para preparar as contas de demonstração estão em `supabase/preparar-demonstracao.sql`. O gestor deve estar vinculado a uma ONG para acessar seu painel.
 
 ## Funcionalidades
 
@@ -66,14 +66,15 @@ As instruções para preparar as contas de demonstração estão em `supabase/de
 - Catálogo com busca por nome, bairro e área de atuação.
 - Perfil público com informações, contato e projetos.
 - Solicitação de inclusão de uma instituição para análise.
-- Cadastro de acesso, login, recuperação de senha e logout.
+- Cadastro de acesso, entrada na conta, recuperação de senha e saída.
 - Painel do gestor para editar a instituição e criar, editar ou remover projetos.
+- Painel administrativo para vincular gestores, aprovar ou rejeitar ONGs.
 
-A solicitação de inclusão não publica a instituição automaticamente. A equipe utiliza as rotas administrativas para conferir os dados, publicar e vincular o gestor. O frontend ainda não possui painel administrativo.
+A solicitação de inclusão abre a área da ONG com o aviso **Em verificação**. A equipe confere os dados e decide no painel `/admin` se publica ou rejeita a ONG. O gestor deve criar a conta, confirmar o e-mail e ser vinculado pela equipe para gerenciar a ONG.
 
 ## API
 
-A documentação está em [http://localhost:3000/docs](http://localhost:3000/docs). A coleção `EloSocial.postman_collection.json` pode ser importada no Postman.
+A documentação está em [http://localhost:3000/docs](http://localhost:3000/docs). A coleção `EloSocial.colecao-postman.json` pode ser importada no Postman.
 
 | Operação | Endpoint |
 |---|---|
@@ -84,13 +85,15 @@ A documentação está em [http://localhost:3000/docs](http://localhost:3000/doc
 | Entrar e sair | `POST /api/auth/login`, `POST /api/auth/logout` |
 | Consultar sessão | `GET /api/auth/me` |
 | Recuperar acesso | `POST /api/auth/recuperar-senha`, `POST /api/auth/confirmar-recuperacao`, `POST /api/auth/redefinir-senha` |
+| Confirmar e-mail | `POST /api/auth/confirmar-email` |
 | Consultar, editar e remover a própria instituição | `GET`, `PATCH`, `DELETE /api/painel` |
 | Listar e criar projetos | `GET`, `POST /api/painel/projetos` |
 | Editar e remover projeto | `PATCH`, `DELETE /api/painel/projetos/:id` |
+| Revisar ONGs e vincular gestor | `GET /api/admin/ongs`, `PATCH /api/admin/ongs/:id`, `POST /api/admin/ongs/:id/gestor` |
 
-Requisições que alteram dados exigem o cabeçalho `Origin` correspondente ao `SITE_URL`. A coleção do Postman já contém essa configuração. No frontend local, o proxy do Vite faz o encaminhamento.
+Requisições que alteram dados exigem o cabeçalho `Origin` correspondente ao `SITE_URL`. A coleção do Postman já contém essa configuração. Na interface local, o encaminhamento do Vite faz essa ligação.
 
-As rotas protegidas utilizam a sessão em cookie HttpOnly. As regras do banco restringem as alterações à instituição vinculada ao gestor. Status, CNPJ, verificação e posição no mapa são controlados pela equipe.
+As rotas protegidas utilizam a sessão em cookie HttpOnly. As regras do banco restringem as alterações à instituição vinculada ao gestor. Situação, CNPJ, verificação e posição no mapa são controlados pela equipe.
 
 ## Recuperação de senha
 
@@ -98,9 +101,25 @@ No Supabase, em **Authentication → URL Configuration → Redirect URLs**, auto
 
 ```text
 http://127.0.0.1:5173/redefinir-senha
+http://127.0.0.1:5173/confirmar-email
 ```
 
-Solicite e abra o link no mesmo navegador, usando o endereço do frontend acima. O fluxo confirma o código do e-mail, permite definir a nova senha e retorna ao login. O envio depende da configuração de e-mails do Supabase e deve ser ensaiado com uma conta de e-mail acessível.
+Solicite e abra o endereço no mesmo navegador, usando o endereço da interface acima. O e-mail de cadastro retorna para `/confirmar-email` e abre a área da ONG; o de recuperação retorna para `/redefinir-senha`. O envio depende da configuração de e-mails do Supabase e deve ser ensaiado com uma conta de e-mail acessível.
+
+## Estrutura para apresentação
+
+- `interface/src/Aplicacao.jsx`: navegação e rotas do React.
+- `interface/src/paginas/`: telas de descoberta, cadastro, autenticação, painel do gestor e administração.
+- `interface/src/componentes/`: componentes reutilizáveis dos formulários e da identidade das ONGs.
+- `interface/src/utilitarios/`: máscaras de CNPJ e telefone e valores compartilhados.
+- `interface/publico/`: imagens exibidas pela interface.
+- `rotinas/`: tarefas manuais de importação.
+- `testes/`: verificações da API e das regras de validação.
+- `src/app/api/`: rotas HTTP do servidor, separadas por cadastro, autenticação, painel e administração.
+- `src/biblioteca/`: validação, conexão com Supabase e respostas da API.
+- `supabase/migrations/`: esquema e regras de acesso do banco.
+
+O explorador do VS Code oculta dependências, compilações e arquivos gerados por meio de `.vscode/settings.json`. Nomes como `node_modules`, `package.json`, `src/app`, `route.ts` e `migrations` seguem as convenções exigidas pelas ferramentas.
 
 ## Verificações
 
@@ -111,10 +130,10 @@ npm test
 npm run typecheck
 ```
 
-Para compilar o frontend:
+Para compilar a interface:
 
 ```sh
-cd frontend
+cd interface
 npm run build
 ```
 
@@ -122,4 +141,4 @@ npm run build
 
 Os registros do `seed.sql` são demonstrativos e possuem posições aproximadas. O Projeto Reviva foi incluído com base em informações públicas do site oficial, com verificação institucional pendente e marcador aproximado na rua informada. A presença no catálogo não implica parceria com a instituição.
 
-Esta versão não inclui pagamentos, inscrições de voluntários ou relatórios. A aplicação está preparada para execução local; sua publicação exige configuração de hospedagem. O limite de tentativas da API é mantido em memória e reinicia com o servidor.
+Esta versão não inclui pagamentos, inscrições de voluntários ou relatórios. A aplicação está preparada para execução local; sua publicação exige configuração de hospedagem. Os bloqueios por número de tentativas da aplicação foram removidos; o provedor de autenticação ainda pode aplicar limites próprios.

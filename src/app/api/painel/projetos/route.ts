@@ -1,31 +1,48 @@
-import { exigirUsuario } from "@/lib/auth";
-import { ApiError, lerJson, ok, rota } from "@/lib/http";
-import { projetoSchema } from "@/lib/validators";
+import { exigirGestorAprovado, exigirUsuario } from "@/biblioteca/autenticacao";
+import { ErroApi, lerJson, ok, rota } from "@/biblioteca/http";
+import { projetoSchema } from "@/biblioteca/validacoes";
 
 // Lista os projetos da ONG do gestor logado (Read).
 export const GET = rota(async () => {
-  const { supabase, user } = await exigirUsuario();
-  const { data: ong } = await supabase.from("ongs").select("id").eq("owner_id", user.id).maybeSingle();
-  if (!ong) throw new ApiError(404, "Nenhuma ONG vinculada a esta conta.");
+  const { supabase, user: usuario } = await exigirUsuario();
+  const { data: ong } = await supabase
+    .from("ongs")
+    .select("id")
+    .eq("owner_id", usuario.id)
+    .maybeSingle();
+  if (!ong) throw new ErroApi(404, "Nenhuma ONG vinculada a esta conta.");
 
-  const { data, error } = await supabase.from("projetos").select("id, nome, descricao").eq("ong_id", ong.id).order("id");
-  if (error) throw error;
-  return ok(data);
+  const { data: dados, error: erro } = await supabase
+    .from("projetos")
+    .select("id, nome, descricao")
+    .eq("ong_id", ong.id)
+    .order("id");
+  if (erro) throw erro;
+  return ok(dados);
 });
 
-export const POST = rota(async (req) => {
-  const { supabase, user } = await exigirUsuario();
-  const { nome, descricao } = projetoSchema.parse(await lerJson(req));
+export const POST = rota(async (requisicao) => {
+  const { supabase, user: usuario } = await exigirGestorAprovado();
+  const { nome, descricao } = projetoSchema.parse(await lerJson(requisicao));
 
-  const { data: ong } = await supabase.from("ongs").select("id").eq("owner_id", user.id).maybeSingle();
-  if (!ong) throw new ApiError(404, "Nenhuma ONG vinculada a esta conta.");
+  const { data: ong } = await supabase
+    .from("ongs")
+    .select("id")
+    .eq("owner_id", usuario.id)
+    .maybeSingle();
+  if (!ong) throw new ErroApi(404, "Nenhuma ONG vinculada a esta conta.");
 
-  const { data, error } = await supabase.from("projetos").insert({ ong_id: ong.id, nome, descricao: descricao ?? null }).select("id, nome, descricao").single();
-  if (error) {
-    if (error.message.includes("Limite")) throw new ApiError(422, "Limite de 30 projetos atingido.");
-    throw error;
+  const { data: dados, error: erro } = await supabase
+    .from("projetos")
+    .insert({ ong_id: ong.id, nome, descricao: descricao ?? null })
+    .select("id, nome, descricao")
+    .single();
+  if (erro) {
+    if (erro.message.includes("Limite"))
+      throw new ErroApi(422, "Limite de 30 projetos atingido.");
+    throw erro;
   }
-  return ok(data, 201);
+  return ok(dados, 201);
 });
 
 export const dynamic = "force-dynamic";

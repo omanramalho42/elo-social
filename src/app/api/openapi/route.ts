@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { openapi } from "@/lib/openapi";
+import { openapi } from "@/biblioteca/openapi";
 
 export const dynamic = "force-dynamic";
 

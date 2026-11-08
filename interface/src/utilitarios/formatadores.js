@@ -8,6 +8,20 @@ export const formatarCnpj = (valor) =>
     .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
     .replace(/\.(\d{3})(\d)/, ".$1/$2")
     .replace(/(\d{4})(\d)/, "$1-$2");
+export const gerarCnpjFicticio = () => {
+  const base = `${Array.from({ length: 8 }, () => Math.floor(Math.random() * 10)).join("")}0001`;
+  const calcularDigito = (numeros, pesos) => {
+    const soma = [...numeros].reduce(
+      (total, numero, indice) => total + Number(numero) * pesos[indice],
+      0,
+    );
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
+  const primeiro = calcularDigito(base, [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  const segundo = calcularDigito(`${base}${primeiro}`, [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  return formatarCnpj(`${base}${primeiro}${segundo}`);
+};
 export const formatarTelefone = (valor) => {
   const n = digitos(valor, 11);
   if (n.length <= 2) return n ? `(${n}` : "";

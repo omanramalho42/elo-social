@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api, AREAS } from "../api";
 import { Campo, Introducao, Aviso } from "../componentes/Comum";
 import { ongVazia } from "../utilitarios/constantes";
+import { gerarCnpjFicticio } from "../utilitarios/formatadores";
 
 export default function CadastroOng() {
   const navegar = useNavigate();
@@ -40,7 +41,7 @@ export default function CadastroOng() {
   function preencherExemplo() {
     definirValoresDoFormulario({
       nome: "Associação Exemplo Fictício",
-      cnpj: "11.222.333/0001-81",
+      cnpj: gerarCnpjFicticio(),
       area: "Educação",
       bairro: "Benfica",
       descricao:

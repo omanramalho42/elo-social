@@ -68,9 +68,11 @@ export default function PainelGestor() {
           texto="Um espaço para cuidar da sua instituição e dos seus projetos."
         />
 
-        <button className="botao" onClick={sair} disabled={saindo}>
-          {saindo ? "Saindo…" : "Sair ↗"}
-        </button>
+        {usuario && (
+          <button className="botao" onClick={sair} disabled={saindo}>
+            {saindo ? "Saindo…" : "Sair ↗"}
+          </button>
+        )}
       </div>
       <Aviso>{erro}</Aviso>
       {pendente || ongEnviada ? (

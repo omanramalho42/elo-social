@@ -17,16 +17,23 @@ export default function RedefinirSenha() {
     const parametros = new URLSearchParams(window.location.search);
     const codigo = parametros.get("code");
     const fragmento = new URLSearchParams(window.location.hash.slice(1));
+    const tokenAcesso = fragmento.get("access_token");
+    const tokenRenovacao = fragmento.get("refresh_token");
     const falhou = parametros.has("error") || fragmento.has("error");
     window.history.replaceState(null, "", window.location.pathname);
-    if (!codigo || falhou) {
+    const dados = codigo
+      ? { codigo }
+      : tokenAcesso && tokenRenovacao
+        ? { tokenAcesso, tokenRenovacao }
+        : null;
+    if (!dados || falhou) {
       definirErro(
         "Esse endereço é inválido ou expirou. Solicite um novo e abra no mesmo navegador.",
       );
       definirSituacao("invalido");
       return;
     }
-    api("/auth/confirmar-recuperacao", { method: "POST", body: { codigo } })
+    api("/auth/confirmar-recuperacao", { method: "POST", body: dados })
       .then(() => definirSituacao("pronto"))
       .catch((e) => {
         definirErro(e.message);

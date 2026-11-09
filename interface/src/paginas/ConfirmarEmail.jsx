@@ -12,16 +12,24 @@ export default function ConfirmarEmail() {
     iniciado.current = true;
     const parametros = new URLSearchParams(window.location.search);
     const codigo = parametros.get("code");
+    const fragmento = new URLSearchParams(window.location.hash.slice(1));
+    const tokenAcesso = fragmento.get("access_token");
+    const tokenRenovacao = fragmento.get("refresh_token");
     const falhou =
-      parametros.get("error_description") || parametros.get("error");
+      parametros.get("error_description") || parametros.get("error") || fragmento.get("error");
     window.history.replaceState(null, "", window.location.pathname);
-    if (!codigo || falhou) {
+    const dados = codigo
+      ? { codigo }
+      : tokenAcesso && tokenRenovacao
+        ? { tokenAcesso, tokenRenovacao }
+        : null;
+    if (!dados || falhou) {
       definirErro(
         "O endereço de confirmação é inválido ou expirou. Solicite um novo cadastro ou entre na sua conta.",
       );
       return;
     }
-    api("/auth/confirmar-email", { method: "POST", body: { codigo } })
+    api("/auth/confirmar-email", { method: "POST", body: dados })
       .then(() => navegar("/painel", { replace: true }))
       .catch((e) => definirErro(e.message));
   }, [navegar]);

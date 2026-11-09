@@ -130,6 +130,15 @@ npm test
 npm run typecheck
 ```
 
+Para ensaiar o fluxo completo com registros temporários no Supabase, ligue o servidor na porta 3000 e, em outro PowerShell, execute:
+
+```powershell
+$env:ELOSOCIAL_TESTE_INTEGRACAO='1'
+npm run testar:fluxo
+```
+
+O ensaio usa a conta `admin@demo.org` preparada em `supabase/preparar-demonstracao.sql`. Ele confere pedido, vínculo, aprovação, recusa, acesso do gestor, projetos, confirmação por link, recuperação e troca de senha; depois remove os registros de teste e verifica a limpeza. A confirmação de entrega do e-mail real depende do serviço de envio do Supabase. Quando o serviço atingir seu limite temporário, o ensaio cria uma conta temporária sem enviar e-mail e usa links gerados pelo Supabase para verificar as etapas seguintes.
+
 Para compilar a interface:
 
 ```sh

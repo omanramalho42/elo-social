@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Routes, Route, useLocation } from "react-router-dom";
+import { Link, NavLink, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { api } from "./api";
 import RedefinirSenha from "./paginas/RedefinirSenha";
 import CadastroOng from "./paginas/CadastroOng";
@@ -13,7 +13,24 @@ import Administracao from "./paginas/Administracao";
 // Esta estrutura reúne o cabeçalho, o rodapé e as rotas da interface.
 export default function Aplicacao() {
   const localizacao = useLocation();
+  const navegar = useNavigate();
   const [papelDaConta, definirPapelDaConta] = useState(null);
+  useEffect(() => {
+    if (localizacao.pathname !== "/") return;
+    const fragmento = new URLSearchParams(window.location.hash.slice(1));
+    if (!fragmento.has("access_token") || !fragmento.has("refresh_token"))
+      return;
+    navegar(
+      {
+        pathname:
+          fragmento.get("type") === "recovery"
+            ? "/redefinir-senha"
+            : "/confirmar-email",
+        hash: window.location.hash,
+      },
+      { replace: true },
+    );
+  }, [localizacao.pathname, navegar]);
   useEffect(() => {
     let ativo = true;
     api("/auth/me")

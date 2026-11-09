@@ -14,7 +14,7 @@ const ORDEM_CRESCENTE = true;
 // Mapa e catálogo (público). O RLS já garante que só ONGs aprovadas aparecem.
 export const GET = rota(async (requisicao) => {
   const parametros = Object.fromEntries(new URL(requisicao.url).searchParams);
-  const { q, area, pagina, limite } = filtroOngsSchema.parse(parametros);
+  const { q, area, bairro, pagina, limite } = filtroOngsSchema.parse(parametros);
 
   let consulta = supabaseDoUsuario()
     .from("ongs")
@@ -22,6 +22,7 @@ export const GET = rota(async (requisicao) => {
     .order("nome", { ascending: ORDEM_CRESCENTE });
 
   if (area) consulta = consulta.eq("area", area);
+  if (bairro) consulta = consulta.ilike("bairro", `%${bairro}%`);
   if (q) {
     // Busca por nome, área ou bairro (como na tela). Só letras/números/espaços: evita injeção no filtro.
     const termo = q.replace(/[^\p{L}\p{N} ]/gu, "").trim();

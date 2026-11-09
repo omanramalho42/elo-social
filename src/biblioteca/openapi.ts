@@ -25,6 +25,34 @@ const corpo = (ref: string, exemplo?: unknown) => ({
     },
   },
 });
+const corpoConfirmacao = {
+  required: true,
+  content: {
+    "application/json": {
+      schema: {
+        oneOf: [
+          {
+            type: "object",
+            required: ["codigo"],
+            additionalProperties: false,
+            properties: {
+              codigo: { type: "string", minLength: 8, maxLength: 2048 },
+            },
+          },
+          {
+            type: "object",
+            required: ["tokenAcesso", "tokenRenovacao"],
+            additionalProperties: false,
+            properties: {
+              tokenAcesso: { type: "string", minLength: 20, maxLength: 8192 },
+              tokenRenovacao: { type: "string", minLength: 8, maxLength: 8192 },
+            },
+          },
+        ],
+      },
+    },
+  },
+};
 const idPath = (nome = "id") => ({
   name: nome,
   in: "path",
@@ -72,6 +100,11 @@ export const openapi = {
             name: "area",
             in: "query",
             schema: { type: "string", enum: AREAS },
+          },
+          {
+            name: "bairro",
+            in: "query",
+            schema: { type: "string", minLength: 2, maxLength: 80 },
           },
           {
             name: "pagina",
@@ -146,6 +179,7 @@ export const openapi = {
         responses: {
           201: { description: "Conta criada", content: json("Mensagem") },
           422: erro("Dados inválidos"),
+          429: erro("Limite temporário de envio de e-mails do Supabase"),
         },
       },
     },
@@ -162,6 +196,7 @@ export const openapi = {
             content: json("Mensagem"),
           },
           503: erro("Serviço de envio indisponível"),
+          429: erro("Limite temporário de envio de e-mails do Supabase"),
         },
       },
     },
@@ -170,22 +205,8 @@ export const openapi = {
         tags: ["Cadastro e sessão"],
         summary: "Confirmar endereço de recuperação",
         description:
-          "Troca o código PKCE de uso único pelo cookie de sessão. Deve usar o navegador que solicitou o e-mail.",
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                required: ["codigo"],
-                additionalProperties: false,
-                properties: {
-                  codigo: { type: "string", minLength: 8, maxLength: 2048 },
-                },
-              },
-            },
-          },
-        },
+          "Confirma o código PKCE ou a sessão recebida no endereço e guarda a sessão em cookie.",
+        requestBody: corpoConfirmacao,
         responses: {
           200: {
             description: "Sessão estabelecida",
@@ -201,22 +222,8 @@ export const openapi = {
         tags: ["Cadastro e sessão"],
         summary: "Confirmar e-mail de cadastro",
         description:
-          "Troca o código do e-mail por uma sessão. Use o mesmo navegador do cadastro.",
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                required: ["codigo"],
-                additionalProperties: false,
-                properties: {
-                  codigo: { type: "string", minLength: 8, maxLength: 2048 },
-                },
-              },
-            },
-          },
-        },
+          "Confirma o código PKCE ou a sessão recebida no endereço e guarda a sessão em cookie.",
+        requestBody: corpoConfirmacao,
         responses: {
           200: { description: "E-mail confirmado", content: json("Mensagem") },
           400: erro("Endereço inválido ou expirado"),
@@ -249,6 +256,7 @@ export const openapi = {
         responses: {
           200: { description: "Entrada realizada", content: json("Mensagem") },
           401: erro("E-mail ou senha incorretos"),
+          429: erro("Limite temporário de tentativas do Supabase"),
         },
       },
     },
@@ -278,9 +286,20 @@ export const openapi = {
         summary: "Ver a própria ONG (leitura)",
         security: sessao,
         responses: {
-          200: { description: "ONG do usuário", content: json("Painel") },
+          200: {
+            description: "ONG do usuário ou situação sem ONG vinculada",
+            content: {
+              "application/json": {
+                schema: {
+                  oneOf: [
+                    { $ref: "#/components/schemas/Painel" },
+                    { $ref: "#/components/schemas/SemOng" },
+                  ],
+                },
+              },
+            },
+          },
           401: erro("Sem sessão"),
-          404: erro("Conta ainda sem ONG vinculada"),
         },
       },
       patch: {
@@ -425,6 +444,7 @@ export const openapi = {
           403: erro("Só equipe"),
           404: erro("ONG ou conta não encontrada"),
           409: erro("Gestor já vinculado a outra ONG"),
+          422: erro("Conta não é de gestor ou e-mail não confirmado"),
         },
       },
       delete: {
@@ -734,6 +754,11 @@ export const openapi = {
             },
           },
         ],
+      },
+      SemOng: {
+        type: "object",
+        required: ["situacao"],
+        properties: { situacao: { type: "string", enum: ["sem_ong"] } },
       },
     },
   },

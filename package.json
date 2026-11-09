@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test testes/openapi.teste.ts testes/validacoes.teste.ts"
+    "test": "tsx --test testes/openapi.teste.ts testes/validacoes.teste.ts",
+    "testar:fluxo": "node rotinas/testar-fluxo.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.5.2",

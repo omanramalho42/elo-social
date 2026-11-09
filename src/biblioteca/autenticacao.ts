@@ -1,5 +1,34 @@
 import { ErroApi } from "./http";
 import { supabaseDoUsuario } from "./supabase/servidor";
+import { confirmarEnderecoSchema } from "./validacoes";
+import { z } from "zod";
+
+export async function confirmarEndereco(
+  dados: z.infer<typeof confirmarEnderecoSchema>,
+  mensagemErro: string,
+) {
+  const supabase = supabaseDoUsuario();
+  let resultado;
+  try {
+    resultado =
+      "codigo" in dados
+        ? await supabase.auth.exchangeCodeForSession(dados.codigo)
+        : await supabase.auth.setSession({
+            access_token: dados.tokenAcesso,
+            refresh_token: dados.tokenRenovacao,
+          });
+  } catch {
+    throw new ErroApi(400, mensagemErro);
+  }
+  if (resultado.error || !resultado.data.session)
+    throw new ErroApi(400, mensagemErro);
+  const { data: verificacao, error: erroVerificacao } =
+    await supabase.auth.getUser();
+  if (erroVerificacao || !verificacao.user) {
+    await supabase.auth.signOut({ scope: "local" });
+    throw new ErroApi(400, mensagemErro);
+  }
+}
 
 export async function exigirUsuario() {
   const supabase = supabaseDoUsuario();

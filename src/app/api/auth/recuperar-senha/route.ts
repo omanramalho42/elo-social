@@ -12,6 +12,11 @@ export const POST = rota(async (requisicao) => {
       redirectTo: `${enderecoFrontend}/redefinir-senha`,
     },
   );
+  if (erro?.status === 429)
+    throw new ErroApi(
+      429,
+      "O Supabase atingiu o limite temporário de envio de e-mails. Aguarde para solicitar outra recuperação.",
+    );
   if (erro)
     throw new ErroApi(
       503,

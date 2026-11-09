@@ -16,7 +16,9 @@ export default function PainelGestor() {
   const ongEnviada = cadastro.get("cadastro") === "ong";
   async function carregar() {
     try {
-      definirOng(await api("/painel"));
+      const dados = await api("/painel");
+      definirOng(dados.situacao === "sem_ong" ? null : dados);
+      definirPendente(dados.situacao === "sem_ong");
       definirErro("");
     } catch (e) {
       if (e.status === 401) {
@@ -75,7 +77,7 @@ export default function PainelGestor() {
         )}
       </div>
       <Aviso>{erro}</Aviso>
-      {pendente || ongEnviada ? (
+      {(pendente || ongEnviada) && !ong ? (
         <div className="cartao-formulario cartao-pendente">
           <span className="sobretitulo">EM VERIFICAÇÃO</span>
           <h2>
@@ -86,7 +88,7 @@ export default function PainelGestor() {
           <p>
             {ongEnviada
               ? "A equipe analisará os dados da ONG. Crie sua conta com o e-mail de contato informado para que a administração possa vinculá-la após a análise."
-              : "Confirme seu e-mail. A equipe analisará o cadastro da ONG e autorizará o acesso ao painel após vincular sua conta."}
+              : "Sua conta está ativa. Cadastre uma ONG para que a equipe confira os dados e vincule o acesso ao painel."}
           </p>
           {ongEnviada && cadastro.get("protocolo") && (
             <p>
@@ -94,6 +96,11 @@ export default function PainelGestor() {
             </p>
           )}
           <div className="acoes-formulario">
+            {usuario && (
+              <button className="botao" onClick={carregar}>
+                Atualizar situação
+              </button>
+            )}
             <Link
               className="botao"
               to={ongEnviada ? "/criar-conta" : "/solicitar"}

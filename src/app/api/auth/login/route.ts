@@ -10,6 +10,8 @@ export const POST = rota(async (requisicao) => {
       email,
       password: senha,
     });
+  if (erro?.status === 429)
+    throw new ErroApi(429, "Muitas tentativas no Supabase. Aguarde e tente entrar novamente.");
   if (erro || !dados.user)
     throw new ErroApi(401, "E-mail ou senha incorretos."); // mensagem única, de propósito
   return ok({ mensagem: "Entrada realizada." });

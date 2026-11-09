@@ -15,11 +15,7 @@ export const GET = rota(async () => {
     .eq("owner_id", usuario.id)
     .maybeSingle();
   if (erro) throw erro;
-  if (!dados)
-    throw new ErroApi(
-      404,
-      "Sua conta ainda não está vinculada a uma ONG. A equipe faz o vínculo após a conferência.",
-    );
+  if (!dados) return ok({ situacao: "sem_ong" });
   return ok(dados);
 });
 

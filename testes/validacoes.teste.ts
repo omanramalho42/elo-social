@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { cnpjValido } from "../src/biblioteca/cnpj";
 import {
   cadastroOngSchema,
+  filtroOngsSchema,
   moderacaoSchema,
   painelSchema,
   projetoSchema,
@@ -21,6 +22,11 @@ const pedido = {
   site: "",
   referencias: "https://instagram.com/exemplo e CNPJ na Receita",
 };
+
+test("catálogo: filtra pelo bairro informado e rejeita filtro vazio", () => {
+  assert.equal(filtroOngsSchema.parse({ bairro: " Benfica " }).bairro, "Benfica");
+  assert.equal(filtroOngsSchema.safeParse({ bairro: " " }).success, false);
+});
 
 test("CNPJ: aceita válido e rejeita inválido/repetido", () => {
   assert.equal(cnpjValido("11.222.333/0001-81"), true);
@@ -148,30 +154,41 @@ test("moderação: aprovar exige posição em Fortaleza; rejeitar exige motivo",
   assert.equal(moderacaoSchema.safeParse({ acao: "rejeitar" }).success, false);
 });
 
-import { confirmarRecuperacaoSchema } from "../src/biblioteca/validacoes";
+import { confirmarEnderecoSchema } from "../src/biblioteca/validacoes";
 
-test("recuperação: exige código e rejeita campos de credenciais extras", () => {
+test("confirmação: aceita código ou sessão e rejeita dados incompletos", () => {
   assert.equal(
-    confirmarRecuperacaoSchema.safeParse({ codigo: "" }).success,
+    confirmarEnderecoSchema.safeParse({ codigo: "" }).success,
     false,
   );
   assert.equal(
-    confirmarRecuperacaoSchema.safeParse({ codigo: "123" }).success,
+    confirmarEnderecoSchema.safeParse({ codigo: "123" }).success,
     false,
   );
   assert.equal(
-    confirmarRecuperacaoSchema.safeParse({ codigo: "a".repeat(2049) }).success,
+    confirmarEnderecoSchema.safeParse({ codigo: "a".repeat(2049) }).success,
     false,
   );
   assert.equal(
-    confirmarRecuperacaoSchema.safeParse({
+    confirmarEnderecoSchema.safeParse({
       codigo: "codigo-de-teste",
       senha: "outra",
     }).success,
     false,
   );
   assert.equal(
-    confirmarRecuperacaoSchema.safeParse({ codigo: "codigo-de-teste" }).success,
+    confirmarEnderecoSchema.safeParse({ codigo: "codigo-de-teste" }).success,
     true,
+  );
+  assert.equal(
+    confirmarEnderecoSchema.safeParse({
+      tokenAcesso: "a".repeat(30),
+      tokenRenovacao: "b".repeat(12),
+    }).success,
+    true,
+  );
+  assert.equal(
+    confirmarEnderecoSchema.safeParse({ tokenAcesso: "a".repeat(30) }).success,
+    false,
   );
 });

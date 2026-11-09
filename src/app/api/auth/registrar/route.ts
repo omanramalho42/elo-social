@@ -18,6 +18,11 @@ export const POST = rota(async (requisicao) => {
     password: d.senha,
     options: { emailRedirectTo: `${enderecoInterface}/confirmar-email` },
   });
+  if (erro?.status === 429)
+    throw new ErroApi(
+      429,
+      "O Supabase atingiu o limite temporário de envio de e-mails. Aguarde a liberação do serviço para criar a conta.",
+    );
   if (erro || !dados.user)
     throw new ErroApi(
       400,

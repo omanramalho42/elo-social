@@ -118,6 +118,7 @@ export const projetoSchema = z
 export const filtroOngsSchema = z.object({
   q: z.string().trim().max(60).optional(),
   area: z.enum(AREAS).optional(),
+  bairro: z.string().trim().min(2).max(80).optional(),
   pagina: z.coerce.number().int().min(1).max(1000).default(1),
   limite: z.coerce.number().int().min(1).max(100).default(50),
 });
@@ -140,7 +141,13 @@ export const confirmarExclusaoSchema = z
   .object({ confirmar: z.literal(true) })
   .strict();
 
-// Código enviado pelo Supabase no endereço de recuperação (fluxo PKCE).
-export const confirmarRecuperacaoSchema = z
-  .object({ codigo: z.string().trim().min(8).max(2048) })
-  .strict();
+// O Supabase pode retornar um código PKCE ou uma sessão no fragmento do endereço.
+export const confirmarEnderecoSchema = z.union([
+  z.object({ codigo: z.string().trim().min(8).max(2048) }).strict(),
+  z
+    .object({
+      tokenAcesso: z.string().min(20).max(8192),
+      tokenRenovacao: z.string().min(8).max(8192),
+    })
+    .strict(),
+]);

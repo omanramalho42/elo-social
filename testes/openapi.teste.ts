@@ -46,6 +46,11 @@ test("ONGs e projetos têm criação, leitura, atualização e exclusão documen
   );
 });
 
+test("o filtro de bairro aparece na documentação da listagem", () => {
+  const rota = openapi.paths["/api/ongs"].get;
+  assert.ok(rota.parameters.some((parametro) => parametro.name === "bairro"));
+});
+
 test("a especificação é um OpenAPI 3 válido", async () => {
   const SwaggerParser = (await import("@apidevtools/swagger-parser")).default;
   await SwaggerParser.validate(JSON.parse(JSON.stringify(openapi)));

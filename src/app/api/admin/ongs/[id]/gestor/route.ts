@@ -1,6 +1,7 @@
 import { exigirAdministrador } from "@/biblioteca/autenticacao";
 import { ErroApi, lerJson, ok, rota } from "@/biblioteca/http";
 import { gestorSchema, idSchema } from "@/biblioteca/validacoes";
+import { supabaseAdministrador } from "@/biblioteca/supabase/administrador";
 
 // Vincula a conta de um gestor (pelo e-mail) a uma ONG. Só a equipe faz isso, depois da conferência.
 export const POST = rota(
@@ -12,10 +13,18 @@ export const POST = rota(
 
     const { data: perfil } = await supabase
       .from("perfis")
-      .select("user_id")
+      .select("user_id, papel")
       .eq("email", email)
       .maybeSingle();
     if (!perfil) throw new ErroApi(404, "Nenhuma conta com esse e-mail.");
+    if (perfil.papel !== "ong")
+      throw new ErroApi(422, "O e-mail precisa pertencer a uma conta de gestor.");
+    const { data: conta, error: erroConta } =
+      await supabaseAdministrador().auth.admin.getUserById(perfil.user_id);
+    if (erroConta || !conta.user)
+      throw new ErroApi(404, "Conta de gestor não encontrada.");
+    if (!conta.user.email_confirmed_at)
+      throw new ErroApi(422, "O gestor precisa confirmar o e-mail antes do vínculo.");
 
     const { data: dados, error: erro } = await supabase
       .from("ongs")

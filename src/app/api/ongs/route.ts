@@ -11,7 +11,7 @@ const semAcento = (t: string) =>
 // true = nomes de A a Z; false = nomes de Z a A.
 const ORDEM_CRESCENTE = true;
 
-// Mapa e catálogo (público). O RLS já garante que só ONGs aprovadas aparecem.
+// Mapa e catálogo (público). O filtro vale também quando a equipe está conectada.
 export const GET = rota(async (requisicao) => {
   const parametros = Object.fromEntries(new URL(requisicao.url).searchParams);
   const { q, area, bairro, pagina, limite } = filtroOngsSchema.parse(parametros);
@@ -19,6 +19,7 @@ export const GET = rota(async (requisicao) => {
   let consulta = supabaseDoUsuario()
     .from("ongs")
     .select(CAMPOS, { count: "exact" })
+    .eq("status", "aprovada")
     .order("nome", { ascending: ORDEM_CRESCENTE });
 
   if (area) consulta = consulta.eq("area", area);

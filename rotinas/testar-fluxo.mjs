@@ -213,6 +213,21 @@ try {
     200,
     "entrada da administração",
   );
+  const catalogoDaEquipe = conferir(
+    await requisitar(`/api/ongs?q=${encodeURIComponent(nome)}`, {
+      sessao: sessaoAdministrador,
+    }),
+    200,
+    "catálogo público com administrador conectado",
+  );
+  assert.equal(catalogoDaEquipe.total, 0);
+  conferir(
+    await requisitar(`/api/ongs/${primeiro.protocolo}`, {
+      sessao: sessaoAdministrador,
+    }),
+    404,
+    "perfil público pendente oculto também da equipe",
+  );
   const fila = conferir(
     await requisitar("/api/admin/ongs?status=pendente", {
       sessao: sessaoAdministrador,

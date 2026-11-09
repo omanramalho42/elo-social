@@ -14,6 +14,7 @@ export const GET = rota(
         "id, nome, bairro, area, descricao, endereco, contato, cnpj, site, lat, lon, verificacao, projetos(id, nome, descricao)",
       )
       .eq("id", id.data)
+      .eq("status", "aprovada")
       .maybeSingle();
     if (erro) throw erro;
     if (!dados) throw new ErroApi(404, "ONG não encontrada.");

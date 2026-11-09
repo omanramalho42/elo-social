@@ -7,3 +7,7 @@ next-env.d.ts
 
 interface/dist
 interface/node_modules
+
+# Capturas e documentos gerados para apresentações
+tmp/pdfs/
+output/pdf/

@@ -97,7 +97,7 @@ As rotas protegidas utilizam a sessão em cookie HttpOnly. As regras do banco re
 
 ## Recuperação de senha
 
-No Supabase, em **Authentication → URL Configuration → Redirect URLs**, autorize:
+No projeto Supabase atual, os dois retornos abaixo já estão autorizados em **Authentication → URL Configuration → Redirect URLs**. Em outro projeto, cadastre-os antes de testar:
 
 ```text
 http://127.0.0.1:5173/redefinir-senha
@@ -105,6 +105,8 @@ http://127.0.0.1:5173/confirmar-email
 ```
 
 Solicite e abra o endereço no mesmo navegador, usando o endereço da interface acima. O e-mail de cadastro retorna para `/confirmar-email` e abre a área da ONG; o de recuperação retorna para `/redefinir-senha`. O envio depende da configuração de e-mails do Supabase e deve ser ensaiado com uma conta de e-mail acessível.
+
+Para cadastrar pessoas fora da equipe do projeto e repetir os testes de e-mail, configure um servidor SMTP próprio em **Supabase → Authentication → SMTP Settings**. O envio padrão do Supabase aceita somente endereços autorizados da equipe e tem limite de duas mensagens por hora por projeto. São necessários endereço e nome do remetente, servidor, porta, usuário e senha SMTP. Depois de salvar, confira também o limite de envio em **Authentication → Rate Limits** e repita o cadastro e a recuperação com uma caixa de entrada acessível. Não coloque a senha SMTP neste repositório.
 
 ## Estrutura para apresentação
 

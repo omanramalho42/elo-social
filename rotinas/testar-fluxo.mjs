@@ -260,6 +260,22 @@ try {
   }
 
   conferir(
+    await requisitar("/api/auth/login", {
+      metodo: "POST",
+      sessao: sessaoGestor,
+      corpo: { email, senha },
+    }),
+    200,
+    "entrada após confirmação",
+  );
+  const semOng = conferir(
+    await requisitar("/api/painel", { sessao: sessaoGestor }),
+    200,
+    "painel sem ONG vinculada responde sem erro 404",
+  );
+  assert.equal(semOng.situacao, "sem_ong");
+
+  conferir(
     await requisitar(`/api/admin/ongs/${primeiro.protocolo}/gestor`, {
       metodo: "POST",
       sessao: sessaoAdministrador,

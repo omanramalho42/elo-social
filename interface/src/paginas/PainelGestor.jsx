@@ -41,7 +41,8 @@ export default function PainelGestor() {
     carregar();
     api("/auth/me")
       .then((conta) => {
-        if (conta.papel === "admin") navegar("/admin", { replace: true });
+        if (conta.papel === "admin" && !ongEnviada)
+          navegar("/admin", { replace: true });
         else definirUsuario(conta);
       })
       .catch(() => {});
@@ -65,9 +66,17 @@ export default function PainelGestor() {
     <div className="conteudo painel">
       <div className="cabecalho-painel">
         <Introducao
-          sobretitulo="PAINEL DO GESTOR"
-          titulo={`Olá${usuario?.nome ? `, ${usuario.nome.split(" ")[0]}` : ", gestor"}.`}
-          texto="Um espaço para cuidar da sua instituição e dos seus projetos."
+          sobretitulo={ongEnviada ? "SOLICITAÇÃO DE ONG" : "PAINEL DO GESTOR"}
+          titulo={
+            ongEnviada
+              ? "ONG enviada."
+              : `Olá${usuario?.nome ? `, ${usuario.nome.split(" ")[0]}` : ", gestor"}.`
+          }
+          texto={
+            ongEnviada
+              ? "A equipe vai conferir os dados antes de publicar a instituição."
+              : "Um espaço para cuidar da sua instituição e dos seus projetos."
+          }
         />
 
         {usuario && (
@@ -77,7 +86,7 @@ export default function PainelGestor() {
         )}
       </div>
       <Aviso>{erro}</Aviso>
-      {(pendente || ongEnviada) && !ong ? (
+      {(pendente && !ong) || ongEnviada ? (
         <div className="cartao-formulario cartao-pendente">
           <span className="sobretitulo">EM VERIFICAÇÃO</span>
           <h2>
@@ -87,7 +96,9 @@ export default function PainelGestor() {
           </h2>
           <p>
             {ongEnviada
-              ? "A equipe analisará os dados da ONG. Crie sua conta com o e-mail de contato informado para que a administração possa vinculá-la após a análise."
+              ? usuario
+                ? "A equipe analisará os dados da ONG e decidirá se ela será publicada."
+                : "A equipe analisará os dados da ONG. Crie sua conta com o e-mail de contato informado para que a administração possa vinculá-la após a análise."
               : "Sua conta está ativa. Cadastre uma ONG para que a equipe confira os dados e vincule o acesso ao painel."}
           </p>
           {ongEnviada && cadastro.get("protocolo") && (
@@ -96,20 +107,33 @@ export default function PainelGestor() {
             </p>
           )}
           <div className="acoes-formulario">
-            {usuario && (
+            {usuario && !ongEnviada && (
               <button className="botao" onClick={carregar}>
                 Atualizar situação
               </button>
             )}
-            <Link
-              className="botao"
-              to={ongEnviada ? "/criar-conta" : "/solicitar"}
-            >
-              {ongEnviada ? "Criar acesso" : "Cadastrar ONG"}
-            </Link>
-            <Link className="botao escuro" to="/entrar">
-              Entrar após confirmar o e-mail
-            </Link>
+            {ongEnviada && usuario ? (
+              <Link
+                className="botao escuro"
+                to={usuario.papel === "admin" ? "/admin" : "/painel"}
+              >
+                {usuario.papel === "admin"
+                  ? "Ir para a administração"
+                  : "Voltar ao painel"}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  className="botao"
+                  to={ongEnviada ? "/criar-conta" : "/solicitar"}
+                >
+                  {ongEnviada ? "Criar acesso" : "Cadastrar ONG"}
+                </Link>
+                <Link className="botao escuro" to="/entrar">
+                  Entrar após confirmar o e-mail
+                </Link>
+              </>
+            )}
           </div>
         </div>
       ) : !ong && !erro ? (

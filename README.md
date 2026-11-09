@@ -47,7 +47,16 @@ Abra [http://127.0.0.1:5173](http://127.0.0.1:5173). Mantenha os dois terminais 
 
 No Windows, `INICIAR-ELOSOCIAL.cmd` também inicia os dois serviços. Não execute o arquivo se os servidores já estiverem abertos.
 
-O Vite encaminha as chamadas `/api` para o servidor na porta 3000. Esse encaminhamento está configurado para desenvolvimento local; a hospedagem precisa de configuração equivalente.
+O Vite encaminha as chamadas `/api` para o servidor na porta 3000 apenas durante o desenvolvimento local.
+
+## Publicar na Vercel
+
+O frontend e o backend são dois projetos da Vercel conectados ao mesmo repositório:
+
+- **Frontend:** diretório raiz `frontend`, Vite, comando `npm run build`, saída `dist`. O arquivo `frontend/vercel.json` encaminha `/api` ao backend e mantém as rotas da interface acessíveis por endereço direto. Se o projeto usar a raiz do repositório, `vercel.json` na raiz define o comando e a saída `frontend/dist`.
+- **Backend:** diretório raiz `backend`, Next.js. Configure as variáveis de `backend/.env.example` no projeto da Vercel. Para os endereços atuais, `SITE_URL=https://elo-social-6qwo.vercel.app` e `FRONTEND_URL=https://elo-social-chi.vercel.app`.
+
+O frontend usa `/api` no mesmo domínio; ele não precisa de uma variável `SITE_URL`. O endereço do backend está no encaminhamento do `vercel.json`. O arquivo `backend/.env.local` serve apenas ao desenvolvimento local e não é enviado ao Git.
 
 ## Banco de dados
 
@@ -69,9 +78,9 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 - Solicitação de inclusão de uma instituição para análise.
 - Cadastro de acesso, entrada na conta, recuperação de senha e saída.
 - Painel do gestor para editar a instituição e criar, editar ou remover projetos.
-- Painel administrativo para vincular gestores, aprovar ou rejeitar ONGs.
+- Painel administrativo para aprovar ou rejeitar ONGs e vincular gestores em cadastros antigos.
 
-A solicitação de inclusão abre a área da ONG com o aviso **Em verificação**. A equipe confere os dados e decide no painel `/admin` se publica ou rejeita a ONG. O gestor deve criar a conta, confirmar o e-mail e ser vinculado pela equipe para gerenciar a ONG.
+A solicitação de inclusão exige uma conta confirmada e aberta. A ONG é vinculada automaticamente ao gestor e aparece no painel como **Em verificação**. A equipe decide no painel `/admin` se publica ou rejeita a ONG.
 
 Publicar uma associação com dados obtidos em fontes públicas não confirma vínculo institucional: o painel mantém a opção **Dados públicos conferidos; vínculo não confirmado** por padrão. Só escolha a opção de vínculo confirmado depois de comprová-lo com a instituição.
 

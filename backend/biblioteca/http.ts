@@ -18,12 +18,16 @@ export const ok = (dados: unknown, situacao = 200) =>
 export function exigirMesmaOrigem(requisicao: Request) {
   if (["GET", "HEAD", "OPTIONS"].includes(requisicao.method)) return;
   const origem = requisicao.headers.get("origin");
-  const permitida = process.env.SITE_URL;
-  if (
-    !origem ||
-    !permitida ||
-    new URL(origem).origin !== new URL(permitida).origin
-  ) {
+  let origemRecebida: string;
+  try {
+    origemRecebida = new URL(origem ?? "").origin;
+  } catch {
+    throw new ErroApi(403, "Origem não permitida.");
+  }
+  const permitidas = [process.env.SITE_URL, process.env.FRONTEND_URL]
+    .filter((valor): valor is string => Boolean(valor))
+    .map((valor) => new URL(valor).origin);
+  if (!permitidas.includes(origemRecebida)) {
     throw new ErroApi(403, "Origem não permitida.");
   }
 }

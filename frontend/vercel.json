@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:caminho*",
+      "destination": "https://elo-social-6qwo.vercel.app/api/:caminho*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

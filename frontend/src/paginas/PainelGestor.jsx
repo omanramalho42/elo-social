@@ -10,6 +10,7 @@ export default function PainelGestor() {
   const [ong, definirOng] = useState(null),
     [erro, definirErro] = useState(""),
     [usuario, definirUsuario] = useState(null),
+    [contaConsultada, definirContaConsultada] = useState(false),
     [pendente, definirPendente] = useState(false);
   const navegar = useNavigate();
   const cadastro = new URLSearchParams(window.location.search);
@@ -45,7 +46,8 @@ export default function PainelGestor() {
           navegar("/admin", { replace: true });
         else definirUsuario(conta);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => definirContaConsultada(true));
   }, []);
   async function sair() {
     if (saindo) return;
@@ -88,53 +90,67 @@ export default function PainelGestor() {
       <Aviso>{erro}</Aviso>
       {(pendente && !ong) || ongEnviada ? (
         <div className="cartao-formulario cartao-pendente">
-          <span className="sobretitulo">EM VERIFICAÇÃO</span>
+          <span className="sobretitulo">
+            {ongEnviada ? "EM VERIFICAÇÃO" : "AGUARDANDO CADASTRO DA ONG"}
+          </span>
           <h2>
             {ongEnviada
               ? "ONG enviada para verificação"
-              : "Seu acesso está em verificação"}
+              : usuario
+                ? "Sua conta está ativa"
+                : "Confirme seu e-mail"}
           </h2>
           <p>
             {ongEnviada
               ? usuario
                 ? "A equipe analisará os dados da ONG e decidirá se ela será publicada."
                 : "A equipe analisará os dados da ONG. Crie sua conta com o e-mail de contato informado para que a administração possa vinculá-la após a análise."
-              : "Sua conta está ativa. Cadastre uma ONG para que a equipe confira os dados e vincule o acesso ao painel."}
+              : usuario
+                ? "Cadastre uma ONG para que a equipe confira os dados e vincule o acesso ao painel."
+                : "Depois de confirmar seu e-mail, entre na conta e cadastre a ONG para análise."}
           </p>
           {ongEnviada && cadastro.get("protocolo") && (
             <p>
               Protocolo <strong>#{cadastro.get("protocolo")}</strong>
             </p>
           )}
-          <div className="acoes-formulario">
-            {usuario && !ongEnviada && (
-              <button className="botao" onClick={carregar}>
-                Atualizar situação
-              </button>
-            )}
-            {ongEnviada && usuario ? (
-              <Link
-                className="botao escuro"
-                to={usuario.papel === "admin" ? "/admin" : "/painel"}
-              >
-                {usuario.papel === "admin"
-                  ? "Ir para a administração"
-                  : "Voltar ao painel"}
-              </Link>
-            ) : (
-              <>
-                <Link
-                  className="botao"
-                  to={ongEnviada ? "/criar-conta" : "/solicitar"}
-                >
-                  {ongEnviada ? "Criar acesso" : "Cadastrar ONG"}
-                </Link>
-                <Link className="botao escuro" to="/entrar">
-                  Entrar após confirmar o e-mail
-                </Link>
-              </>
-            )}
-          </div>
+          {contaConsultada && (
+            <div className="acoes-formulario">
+              {usuario && !ongEnviada && (
+                <button className="botao" onClick={carregar}>
+                  Atualizar situação
+                </button>
+              )}
+              {usuario ? (
+                ongEnviada ? (
+                  <Link
+                    className="botao escuro"
+                    to={usuario.papel === "admin" ? "/admin" : "/painel"}
+                  >
+                    {usuario.papel === "admin"
+                      ? "Ir para a administração"
+                      : "Voltar ao painel"}
+                  </Link>
+                ) : (
+                  <Link className="botao" to="/solicitar">
+                    Cadastrar ONG
+                  </Link>
+                )
+              ) : (
+                <>
+                  <Link
+                    className="botao"
+                    to={ongEnviada ? "/criar-conta" : "/solicitar"}
+                  >
+                    {ongEnviada ? "Criar acesso" : "Cadastrar ONG"}
+                  </Link>
+                  <Link className="botao escuro" to="/entrar">
+                    Entrar após confirmar o e-mail
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
         </div>
       ) : !ong && !erro ? (
         <Carregando />

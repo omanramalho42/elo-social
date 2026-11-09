@@ -15,6 +15,8 @@ export default function Aplicacao() {
   const localizacao = useLocation();
   const navegar = useNavigate();
   const [papelDaConta, definirPapelDaConta] = useState(null);
+  const mostrarCadastro =
+    papelDaConta !== "admin" && localizacao.pathname !== "/admin";
   useEffect(() => {
     if (localizacao.pathname !== "/") return;
     const fragmento = new URLSearchParams(window.location.hash.slice(1));
@@ -60,7 +62,7 @@ export default function Aplicacao() {
               Mapa
             </NavLink>
             <NavLink to="/catalogo">Catálogo</NavLink>
-            <NavLink to="/solicitar">Cadastrar ONG</NavLink>
+            {mostrarCadastro && <NavLink to="/solicitar">Cadastrar ONG</NavLink>}
           </nav>
           <Link
             className="botao escuro pequeno"
@@ -115,7 +117,9 @@ export default function Aplicacao() {
         <div className="conteudo-rodape">
           <Marca />
           <p>Catálogo de ONGs e projetos sociais de Fortaleza.</p>
-          <Link to="/solicitar">Solicitar inclusão de ONG ↗</Link>
+          {mostrarCadastro && (
+            <Link to="/solicitar">Solicitar inclusão de ONG ↗</Link>
+          )}
         </div>
         <div className="rodape-inferior">
           <span>© {new Date().getFullYear()} EloSocial</span>

@@ -15,7 +15,7 @@ Plataforma acadêmica para divulgar ONGs e projetos sociais de Fortaleza. O visi
 
 É necessário ter Node.js e npm instalados, além das credenciais do projeto Supabase da equipe.
 
-Copie `.env.example` para `.env.local`, na raiz, e preencha as variáveis:
+Copie `backend/.env.example` para `backend/.env.local` e preencha as variáveis:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
@@ -27,9 +27,10 @@ FRONTEND_URL=http://127.0.0.1:5173
 
 O arquivo `.env.local` é privado e não deve ser enviado ao repositório. As chaves ficam no servidor.
 
-**Terminal 1 — servidor, na raiz do projeto:**
+**Terminal 1 — servidor (`cd backend`):**
 
 ```sh
+cd backend
 npm ci
 npm run dev -- --port 3000
 ```
@@ -37,7 +38,7 @@ npm run dev -- --port 3000
 **Terminal 2 — interface:**
 
 ```sh
-cd interface
+cd frontend
 npm ci
 npm run dev
 ```
@@ -54,11 +55,11 @@ Para usar o banco já configurado pela equipe, basta preencher o `.env.local`. N
 
 Em um projeto Supabase novo, execute no SQL Editor, nesta ordem:
 
-1. `supabase/migrations/0001_esquema.sql`.
-2. `supabase/migrations/0002_crud_completo.sql`.
-3. Opcionalmente, `supabase/seed.sql`, com os dados demonstrativos.
+1. `backend/supabase/migrations/0001_esquema.sql`.
+2. `backend/supabase/migrations/0002_crud_completo.sql`.
+3. Opcionalmente, `backend/supabase/seed.sql`, com os dados demonstrativos.
 
-As instruções para preparar as contas de demonstração estão em `supabase/preparar-demonstracao.sql`. O gestor deve estar vinculado a uma ONG para acessar seu painel.
+As instruções para preparar as contas de demonstração estão em `backend/supabase/preparar-demonstracao.sql`. O gestor deve estar vinculado a uma ONG para acessar seu painel.
 
 ## Funcionalidades
 
@@ -74,7 +75,7 @@ A solicitação de inclusão abre a área da ONG com o aviso **Em verificação*
 
 ## API
 
-A documentação está em [http://localhost:3000/docs](http://localhost:3000/docs). A coleção `EloSocial.colecao-postman.json` pode ser importada no Postman.
+A documentação está em [http://localhost:3000/docs](http://localhost:3000/docs). A coleção `backend/EloSocial.colecao-postman.json` pode ser importada no Postman.
 
 | Operação | Endpoint |
 |---|---|
@@ -110,22 +111,22 @@ Para cadastrar pessoas fora da equipe do projeto e repetir os testes de e-mail, 
 
 ## Estrutura para apresentação
 
-- `interface/src/Aplicacao.jsx`: navegação e rotas do React.
-- `interface/src/paginas/`: telas de descoberta, cadastro, autenticação, painel do gestor e administração.
-- `interface/src/componentes/`: componentes reutilizáveis dos formulários e da identidade das ONGs.
-- `interface/src/utilitarios/`: máscaras de CNPJ e telefone e valores compartilhados.
-- `interface/publico/`: imagens exibidas pela interface.
-- `rotinas/`: tarefas manuais de importação.
-- `testes/`: verificações da API e das regras de validação.
-- `src/app/api/`: rotas HTTP do servidor, separadas por cadastro, autenticação, painel e administração.
-- `src/biblioteca/`: validação, conexão com Supabase e respostas da API.
-- `supabase/migrations/`: esquema e regras de acesso do banco.
+- `frontend/src/Aplicacao.jsx`: navegação e rotas do React.
+- `frontend/src/paginas/`: telas de descoberta, cadastro, autenticação, painel do gestor e administração.
+- `frontend/src/componentes/`: componentes reutilizáveis dos formulários e da identidade das ONGs.
+- `frontend/src/utilitarios/`: máscaras de CNPJ e telefone e valores compartilhados.
+- `frontend/publico/`: imagens exibidas pela interface.
+- `backend/app/api/`: rotas HTTP do servidor, separadas por cadastro, autenticação, painel e administração.
+- `backend/biblioteca/`: validação, conexão com Supabase e respostas da API.
+- `backend/supabase/migrations/`: esquema e regras de acesso do banco.
+- `backend/rotinas/`: tarefas manuais de importação e ensaio do fluxo.
+- `backend/testes/`: verificações da API e das regras de validação.
 
-O explorador do VS Code oculta dependências, compilações e arquivos gerados por meio de `.vscode/settings.json`. Nomes como `node_modules`, `package.json`, `src/app`, `route.ts` e `migrations` seguem as convenções exigidas pelas ferramentas.
+O explorador do VS Code oculta dependências, compilações e arquivos gerados por meio de `.vscode/settings.json`. O Next.js exige as pastas `app/api` e arquivos `route.ts` para as rotas do servidor.
 
 ## Verificações
 
-Na raiz:
+Dentro de `backend/`:
 
 ```sh
 npm test
@@ -139,12 +140,12 @@ $env:ELOSOCIAL_TESTE_INTEGRACAO='1'
 npm run testar:fluxo
 ```
 
-O ensaio usa a conta `admin@demo.org` preparada em `supabase/preparar-demonstracao.sql`. Ele confere pedido, vínculo, aprovação, recusa, acesso do gestor, projetos, confirmação por link, recuperação e troca de senha; depois remove os registros de teste e verifica a limpeza. A confirmação de entrega do e-mail real depende do serviço de envio do Supabase. Quando o serviço atingir seu limite temporário, o ensaio cria uma conta temporária sem enviar e-mail e usa links gerados pelo Supabase para verificar as etapas seguintes.
+O ensaio usa a conta `admin@demo.org` preparada em `backend/supabase/preparar-demonstracao.sql`. Ele confere pedido, vínculo, aprovação, recusa, acesso do gestor, projetos, confirmação por link, recuperação e troca de senha; depois remove os registros de teste e verifica a limpeza. A confirmação de entrega do e-mail real depende do serviço de envio do Supabase. Quando o serviço atingir seu limite temporário, o ensaio cria uma conta temporária sem enviar e-mail e usa links gerados pelo Supabase para verificar as etapas seguintes.
 
 Para compilar a interface:
 
 ```sh
-cd interface
+cd frontend
 npm run build
 ```
 

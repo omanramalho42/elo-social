@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
-import { gerarCnpjFicticio } from "../interface/src/utilitarios/formatadores.js";
+import { gerarCnpjFicticio } from "../../frontend/src/utilitarios/formatadores.js";
 
 // Ensaio integrado opcional. Usa as contas de demonstração e remove os dados que criar.
 if (process.env.ELOSOCIAL_TESTE_INTEGRACAO !== "1") {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
-import { openapi } from "../src/biblioteca/openapi";
+import { openapi } from "../biblioteca/openapi";
 
 function rotas(dir: string, base = ""): string[] {
   return readdirSync(dir).flatMap((nome) => {
@@ -14,7 +14,7 @@ function rotas(dir: string, base = ""): string[] {
 }
 
 test("toda rota /api (exceto /api/openapi) e todo método estão documentados no Swagger", () => {
-  const raiz = join(__dirname, "../src/app/api");
+  const raiz = join(__dirname, "../app/api");
   for (const rota of rotas(raiz).filter((r) => r !== "/openapi")) {
     const codigo = readFileSync(join(raiz, rota, "route.ts"), "utf8");
     const caminho = "/api" + rota.replace(/\[(\w+)\]/g, "{$1}");

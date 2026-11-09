@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { cnpjValido } from "../src/biblioteca/cnpj";
+import { cnpjValido } from "../biblioteca/cnpj";
 import {
   cadastroOngSchema,
   filtroOngsSchema,
@@ -8,7 +8,7 @@ import {
   painelSchema,
   projetoSchema,
   registrarSchema,
-} from "../src/biblioteca/validacoes";
+} from "../biblioteca/validacoes";
 
 const pedido = {
   nome: "Associação Exemplo",
@@ -154,7 +154,7 @@ test("moderação: aprovar exige posição em Fortaleza; rejeitar exige motivo",
   assert.equal(moderacaoSchema.safeParse({ acao: "rejeitar" }).success, false);
 });
 
-import { confirmarEnderecoSchema } from "../src/biblioteca/validacoes";
+import { confirmarEnderecoSchema } from "../biblioteca/validacoes";
 
 test("confirmação: aceita código ou sessão e rejeita dados incompletos", () => {
   assert.equal(

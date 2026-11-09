@@ -1,4 +1,4 @@
--- PREPARAÇÃO DA DEMONSTRAÇÃO (rode UMA vez, depois de 0001, 0002 e seed.sql)
+-- PREPARAÇÃO DAS CONTAS DE TESTE (rode UMA vez depois das migrações)
 --
 -- Antes, no painel do Supabase: Authentication > Users > Add user > Create new user.
 -- Marque "Auto Confirm User". Crie dois usuários:
@@ -12,10 +12,7 @@ select id, 'ong', 'Gestor Demonstração', email, '85999990000' from auth.users 
 insert into public.perfis (user_id, papel, nome, email)
 select id, 'admin', 'Equipe EloSocial', email from auth.users where email = 'admin@demo.org';
 
--- Vincula o gestor à ONG "Rede Aprender" (a que tem projeto de exemplo)
-update public.ongs
-set owner_id = (select id from auth.users where email = 'gestor@demo.org')
-where nome = 'Rede Aprender';
-
--- Conferência: deve mostrar a ONG com o dono preenchido
+-- A conta de gestor de teste fica sem vínculo permanente. O ensaio integrado
+-- cria uma ONG temporária, testa o vínculo e remove os registros ao terminar.
+-- Nunca vincule uma conta de demonstração a uma associação real sem autorização.
 select id, nome, status, owner_id from public.ongs;

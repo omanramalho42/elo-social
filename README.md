@@ -57,9 +57,9 @@ Em um projeto Supabase novo, execute no SQL Editor, nesta ordem:
 
 1. `backend/supabase/migrations/0001_esquema.sql`.
 2. `backend/supabase/migrations/0002_crud_completo.sql`.
-3. Opcionalmente, `backend/supabase/seed.sql`, com os dados demonstrativos.
+3. Opcionalmente, `backend/supabase/seed.sql`, com dados públicos de duas associações reais e projetos divulgados nos sites oficiais. Os registros entram como pendentes para a equipe aprovar no painel.
 
-As instruções para preparar as contas de demonstração estão em `backend/supabase/preparar-demonstracao.sql`. O gestor deve estar vinculado a uma ONG para acessar seu painel.
+As instruções para preparar as contas de demonstração estão em `backend/supabase/preparar-demonstracao.sql`. A conta de gestor de teste fica sem vínculo permanente; o ensaio integrado cria uma ONG temporária e limpa os dados depois.
 
 ## Funcionalidades
 
@@ -72,6 +72,8 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 - Painel administrativo para vincular gestores, aprovar ou rejeitar ONGs.
 
 A solicitação de inclusão abre a área da ONG com o aviso **Em verificação**. A equipe confere os dados e decide no painel `/admin` se publica ou rejeita a ONG. O gestor deve criar a conta, confirmar o e-mail e ser vinculado pela equipe para gerenciar a ONG.
+
+Publicar uma associação com dados obtidos em fontes públicas não confirma vínculo institucional: o painel mantém a opção **Dados públicos conferidos; vínculo não confirmado** por padrão. Só escolha a opção de vínculo confirmado depois de comprová-lo com a instituição.
 
 ## Regras dos cadastros
 
@@ -152,6 +154,15 @@ npm run testar:fluxo
 
 O ensaio usa a conta `admin@demo.org` preparada em `backend/supabase/preparar-demonstracao.sql`. Ele confere pedido, vínculo, aprovação, recusa, acesso do gestor, projetos, confirmação por link, recuperação e troca de senha; depois remove os registros de teste e verifica a limpeza. A confirmação de entrega do e-mail real depende do serviço de envio do Supabase. Quando o serviço atingir seu limite temporário, o ensaio cria uma conta temporária sem enviar e-mail e usa links gerados pelo Supabase para verificar as etapas seguintes.
 
+Para preparar o catálogo de apresentação no banco atual, com o servidor ligado na porta 3000, execute uma vez em `backend/`:
+
+```powershell
+$env:ELOSOCIAL_PREPARAR_APRESENTACAO='1'
+npm run preparar:apresentacao
+```
+
+A rotina envia duas associações reais pela API de cadastro, deixa seus cartões em **Em verificação** para a decisão ao vivo no painel administrativo, adiciona projetos descritos nos sites oficiais e remove somente os seis exemplos fictícios identificados no código. As coordenadas sugeridas são aproximadas e devem ser conferidas antes da aprovação. A rotina pode ser repetida sem duplicar os dados ou desfazer decisões já tomadas no painel.
+
 Para compilar a interface:
 
 ```sh
@@ -161,6 +172,6 @@ npm run build
 
 ## Dados e escopo
 
-Os registros do `seed.sql` são demonstrativos e possuem posições aproximadas. O Projeto Reviva foi incluído com base em informações públicas do site oficial, com verificação institucional pendente e marcador aproximado na rua informada. A presença no catálogo não implica parceria com a instituição.
+Os registros do `seed.sql` são baseados em [fontes públicas da Associação Peter Pan](https://www.app.org.br/) e da [Associação Projeto Frente Beneficente para a Criança](https://www.frentebeneficente.org.br/). Os marcadores foram obtidos por busca dos endereços no OpenStreetMap/Nominatim e são aproximados. O Projeto Reviva também foi incluído com base no seu site público, com verificação institucional pendente. A presença no catálogo não implica parceria, representação ou confirmação de vínculo com essas instituições.
 
 Esta versão não inclui pagamentos, inscrições de voluntários ou relatórios. A aplicação está preparada para execução local; sua publicação exige configuração de hospedagem. Os bloqueios por número de tentativas da aplicação foram removidos; o provedor de autenticação ainda pode aplicar limites próprios.

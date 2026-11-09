@@ -8,7 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test testes/openapi.teste.ts testes/validacoes.teste.ts",
-    "testar:fluxo": "node rotinas/testar-fluxo.mjs"
+    "testar:fluxo": "node rotinas/testar-fluxo.mjs",
+    "preparar:apresentacao": "node rotinas/preparar-apresentacao.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.5.2",

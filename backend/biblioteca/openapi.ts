@@ -420,7 +420,7 @@ export const openapi = {
         ],
         responses: {
           200: {
-            description: "Lista (inclui CNPJ)",
+            description: "Lista para revisão: CNPJ, coordenadas, projetos e referências privadas da equipe",
             content: {
               "application/json": {
                 schema: { type: "array", items: { type: "object" } },

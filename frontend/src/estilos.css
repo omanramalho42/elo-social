@@ -956,6 +956,25 @@ main {
   margin: 6px 0 0;
   font-size: 13px;
 }
+.projetos-revisao {
+  margin: 16px 0 22px;
+}
+.projetos-revisao h3 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+.projetos-revisao ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.projetos-revisao li {
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.projetos-revisao li p {
+  color: var(--muted);
+  margin: 4px 0 0;
+}
 .acoes-administracao {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

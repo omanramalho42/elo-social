@@ -15,7 +15,7 @@ export const GET = rota(async (requisicao) => {
   const { data: dados, error: erro } = await supabase
     .from("ongs")
     .select(
-      "id, nome, bairro, area, descricao, endereco, contato, site, cnpj, status, verificacao, owner_id, created_at, ongs_privado(responsavel, referencias)",
+      "id, nome, bairro, area, descricao, endereco, contato, site, cnpj, lat, lon, status, verificacao, owner_id, created_at, ongs_privado(responsavel, referencias), projetos(id, nome, descricao)",
     )
     .eq("status", situacao)
     .order("created_at");

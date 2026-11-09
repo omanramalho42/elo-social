@@ -13,11 +13,10 @@ function CartaoRevisao({ ong, atualizar }) {
   const dadosPrivados = Array.isArray(ong.ongs_privado)
     ? ong.ongs_privado[0]
     : ong.ongs_privado;
-  const [lat, definirLatitude] = useState("");
-  const [lon, definirLongitude] = useState("");
-  const [email, definirEmail] = useState(
-    ong.contato?.includes("@") ? ong.contato : "",
-  );
+  const [lat, definirLatitude] = useState(ong.lat ?? "");
+  const [lon, definirLongitude] = useState(ong.lon ?? "");
+  const [email, definirEmail] = useState("");
+  const [verificacao, definirVerificacao] = useState("nao_verificado");
   const [motivo, definirMotivo] = useState("");
   const [ocupado, definirOcupado] = useState(false);
   const [erro, definirErro] = useState("");
@@ -45,7 +44,7 @@ function CartaoRevisao({ ong, atualizar }) {
             acao: "aprovar",
             lat: Number(lat),
             lon: Number(lon),
-            verificacao: "verificado",
+            verificacao,
           },
         });
         definirMensagem("ONG aprovada e publicada.");
@@ -105,6 +104,19 @@ function CartaoRevisao({ ong, atualizar }) {
           <dd>{dadosPrivados?.referencias || "Não informadas"}</dd>
         </div>
       </dl>
+      {ong.projetos?.length > 0 && (
+        <section className="projetos-revisao">
+          <h3>Projetos informados</h3>
+          <ul>
+            {ong.projetos.map((projeto) => (
+              <li key={projeto.id}>
+                <strong>{projeto.nome}</strong>
+                {projeto.descricao && <p>{projeto.descricao}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {erro && (
         <div className="aviso" role="alert">
           {erro}
@@ -119,7 +131,10 @@ function CartaoRevisao({ ong, atualizar }) {
         <div className="acoes-administracao">
           <div>
             <h3>1. Vincular gestor</h3>
-            <p>Use o e-mail de uma conta já confirmada.</p>
+            <p>
+              Use o e-mail de uma conta já confirmada e autorizada pela ONG.
+              O contato público da instituição não é uma conta de gestor.
+            </p>
             <label className="campo">
               E-mail do gestor
               <input
@@ -144,8 +159,9 @@ function CartaoRevisao({ ong, atualizar }) {
             <div>
               <h3>2. Decidir cadastro</h3>
               <p>
-                Digite a latitude e a longitude conferidas no mapa. Os números
-                em cinza nos campos são apenas exemplos; não estão preenchidos.
+                {ong.lat == null || ong.lon == null
+                  ? "Digite a latitude e a longitude conferidas no mapa. Os números em cinza nos campos são apenas exemplos."
+                  : "Coordenadas sugeridas pela busca do endereço no mapa. Confira a posição antes de aprovar."}
               </p>
               <div className="coordenadas-administracao">
                 <label className="campo">
@@ -173,6 +189,20 @@ function CartaoRevisao({ ong, atualizar }) {
                   />
                 </label>
               </div>
+              <label className="campo">
+                Verificação institucional
+                <select
+                  value={verificacao}
+                  onChange={(e) => definirVerificacao(e.target.value)}
+                >
+                  <option value="nao_verificado">
+                    Dados públicos conferidos; vínculo não confirmado
+                  </option>
+                  <option value="verificado">
+                    Vínculo com a instituição confirmado pela equipe
+                  </option>
+                </select>
+              </label>
               {(lat === "" || lon === "") && (
                 <p className="dica">
                   Preencha os dois campos para liberar “Aprovar e publicar”.

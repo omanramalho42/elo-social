@@ -66,7 +66,7 @@ const senha = z
   .regex(/[A-Za-z]/, "A senha precisa ter uma letra")
   .regex(/\d/, "A senha precisa ter um número");
 
-// Tela "Cadastrar ONG" (pública, sem entrar na conta)
+// Tela "Cadastrar ONG" (apenas gestor autenticado)
 export const cadastroOngSchema = z
   .object({
     nome: texto(3, 120),

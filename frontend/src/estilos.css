@@ -528,8 +528,9 @@ main {
   background: #fff;
 }
 .entrada-url > span {
-  padding-left: 12px;
+  padding-left: 14px;
   font-size: 13px;
+  font-weight: 400;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -537,10 +538,15 @@ main {
   margin: 0;
   border: 0;
   min-width: 0;
-  padding-left: 2px;
+  flex: 1;
+  padding-left: 4px;
+  border-radius: 0 6px 6px 0;
+}
+.campo .entrada-url input:focus {
+  outline: none;
 }
 .entrada-url:focus-within {
-  outline: 2px solid #6a785c;
+  outline: 2px solid #84977b;
   outline-offset: 2px;
 }
 .cartao-formulario {

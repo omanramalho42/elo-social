@@ -16,7 +16,7 @@ create table public.perfis (
 
 create table public.ongs (
   id               bigint generated always as identity primary key,
-  owner_id         uuid unique references auth.users (id) on delete set null,   -- gestor vinculado (pela equipe)
+  owner_id         uuid unique references auth.users (id) on delete set null,   -- gestor que enviou ou foi vinculado pela equipe
   nome             text not null check (char_length(nome) between 3 and 120),
   bairro           text not null check (char_length(bairro) between 2 and 80),
   area             area_atuacao not null,

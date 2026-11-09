@@ -137,26 +137,17 @@ try {
   );
   conferir(
     await requisitar("/api/cadastro", { metodo: "POST", corpo: {} }),
-    422,
-    "pedido sem dados rejeitado",
+    401,
+    "cadastro sem sessão bloqueado antes da validação dos dados",
   );
   const cnpjPrimeiro = gerarCnpjFicticio();
-  const primeiro = conferir(
+  conferir(
     await requisitar("/api/cadastro", {
       metodo: "POST",
       corpo: corpoOng("Aprovação", cnpjPrimeiro),
     }),
-    201,
-    "pedido de ONG",
-  );
-  pedidos.push(primeiro.protocolo);
-  conferir(
-    await requisitar("/api/cadastro", {
-      metodo: "POST",
-      corpo: corpoOng("Duplicada", cnpjPrimeiro),
-    }),
-    409,
-    "CNPJ duplicado rejeitado",
+    401,
+    "pedido completo sem login bloqueado",
   );
 
   let lista = conferir(
@@ -221,42 +212,9 @@ try {
     "catálogo público com administrador conectado",
   );
   assert.equal(catalogoDaEquipe.total, 0);
-  conferir(
-    await requisitar(`/api/ongs/${primeiro.protocolo}`, {
-      sessao: sessaoAdministrador,
-    }),
-    404,
-    "perfil público pendente oculto também da equipe",
-  );
-  const fila = conferir(
-    await requisitar("/api/admin/ongs?status=pendente", {
-      sessao: sessaoAdministrador,
-    }),
-    200,
-    "fila de verificação",
-  );
-  assert.ok(fila.some((ong) => ong.id === primeiro.protocolo));
-  conferir(
-    await requisitar(`/api/admin/ongs/${primeiro.protocolo}/gestor`, {
-      metodo: "POST",
-      sessao: sessaoAdministrador,
-      corpo: { email: "admin@demo.org" },
-    }),
-    422,
-    "conta da equipe não pode ser gestora",
-  );
 
   const { data: conta } = await administrador.auth.admin.getUserById(usuarioId);
   if (!conta?.user?.email_confirmed_at) {
-    conferir(
-      await requisitar(`/api/admin/ongs/${primeiro.protocolo}/gestor`, {
-        metodo: "POST",
-        sessao: sessaoAdministrador,
-        corpo: { email },
-      }),
-      422,
-      "bloqueio de conta sem confirmação",
-    );
     conferir(
       await requisitar("/api/auth/confirmar-email", {
         metodo: "POST",
@@ -291,23 +249,57 @@ try {
   assert.equal(semOng.situacao, "sem_ong");
 
   conferir(
-    await requisitar(`/api/admin/ongs/${primeiro.protocolo}/gestor`, {
+    await requisitar("/api/cadastro", {
       metodo: "POST",
       sessao: sessaoAdministrador,
-      corpo: { email },
+      corpo: corpoOng("Equipe", gerarCnpjFicticio()),
     }),
-    200,
-    "vínculo do gestor",
+    403,
+    "administrador não cadastra ONG pela rota de gestor",
   );
   conferir(
-    await requisitar("/api/auth/login", {
+    await requisitar("/api/cadastro", {
       metodo: "POST",
       sessao: sessaoGestor,
-      corpo: { email, senha },
+      corpo: {},
+    }),
+    422,
+    "pedido autenticado sem dados rejeitado",
+  );
+  const primeiro = conferir(
+    await requisitar("/api/cadastro", {
+      metodo: "POST",
+      sessao: sessaoGestor,
+      corpo: corpoOng("Aprovação", cnpjPrimeiro),
+    }),
+    201,
+    "pedido autenticado de ONG",
+  );
+  pedidos.push(primeiro.protocolo);
+  conferir(
+    await requisitar("/api/cadastro", {
+      metodo: "POST",
+      sessao: sessaoGestor,
+      corpo: corpoOng("Duplicada", cnpjPrimeiro),
+    }),
+    409,
+    "segunda ONG na mesma conta rejeitada",
+  );
+  conferir(
+    await requisitar(`/api/ongs/${primeiro.protocolo}`, {
+      sessao: sessaoAdministrador,
+    }),
+    404,
+    "perfil público pendente oculto também da equipe",
+  );
+  const fila = conferir(
+    await requisitar("/api/admin/ongs?status=pendente", {
+      sessao: sessaoAdministrador,
     }),
     200,
-    "entrada do gestor",
+    "fila de verificação",
   );
+  assert.equal(fila.find((ong) => ong.id === primeiro.protocolo)?.owner_id, usuarioId);
   conferir(
     await requisitar("/api/admin/ongs", { sessao: sessaoGestor }),
     403,
@@ -410,17 +402,24 @@ try {
     "remoção de projeto temporário",
   );
 
-  const segundo = conferir(
-    await requisitar("/api/cadastro", {
-      metodo: "POST",
-      corpo: corpoOng("Recusa", gerarCnpjFicticio()),
-    }),
-    201,
-    "segundo pedido de ONG",
+  const { responsavel, referencias, ...dadosSegundo } = corpoOng(
+    "Recusa",
+    gerarCnpjFicticio(),
   );
-  pedidos.push(segundo.protocolo);
+  const { data: segundo, error: erroSegundo } = await administrador
+    .from("ongs")
+    .insert({ ...dadosSegundo, cnpj: dadosSegundo.cnpj.replace(/\D/g, "") })
+    .select("id")
+    .single();
+  if (erroSegundo || !segundo)
+    throw erroSegundo ?? new Error("Segundo pedido não criado.");
+  pedidos.push(segundo.id);
+  const { error: erroPrivado } = await administrador
+    .from("ongs_privado")
+    .insert({ ong_id: segundo.id, responsavel, referencias });
+  if (erroPrivado) throw erroPrivado;
   conferir(
-    await requisitar(`/api/admin/ongs/${segundo.protocolo}`, {
+    await requisitar(`/api/admin/ongs/${segundo.id}`, {
       metodo: "PATCH",
       sessao: sessaoAdministrador,
       corpo: { acao: "rejeitar", motivo: "Cadastro temporário de teste." },
@@ -435,13 +434,13 @@ try {
     200,
     "fila de recusadas",
   );
-  assert.ok(recusadas.some((ong) => ong.id === segundo.protocolo));
+  assert.ok(recusadas.some((ong) => ong.id === segundo.id));
   lista = conferir(
     await requisitar(`/api/ongs?q=${encodeURIComponent(codigo)}`),
     200,
     "ONG recusada fora do catálogo",
   );
-  assert.ok(!lista.ongs.some((ong) => ong.id === segundo.protocolo));
+  assert.ok(!lista.ongs.some((ong) => ong.id === segundo.id));
   conferir(
     await requisitar("/api/auth/logout", {
       metodo: "POST",

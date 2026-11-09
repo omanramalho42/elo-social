@@ -130,34 +130,39 @@ function CartaoRevisao({ ong, atualizar }) {
       {(ong.status === "pendente" || ong.status === "aprovada") && (
         <div className="acoes-administracao">
           <div>
-            <h3>1. Vincular gestor</h3>
-            <p>
-              Use o e-mail de uma conta já confirmada e autorizada pela ONG.
-              O contato público da instituição não é uma conta de gestor.
-            </p>
-            <label className="campo">
-              E-mail do gestor
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => definirEmail(e.target.value)}
-                placeholder="gestor@ong.org.br"
-              />
-            </label>
-            <button
-              className="botao"
-              disabled={ocupado || !email}
-              onClick={() => executar("vincular")}
-            >
-              Vincular gestor
-            </button>
-            {ong.owner_id && (
-              <span className="gestor-vinculado">Gestor vinculado</span>
+            {ong.owner_id ? (
+              <p className="gestor-vinculado">
+                Gestor já vinculado a esta ONG.
+              </p>
+            ) : (
+              <>
+                <h3>Vincular gestor</h3>
+                <p>
+                  Para cadastros antigos, use uma conta confirmada e autorizada
+                  pela ONG.
+                </p>
+                <label className="campo">
+                  E-mail do gestor
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => definirEmail(e.target.value)}
+                    placeholder="gestor@ong.org.br"
+                  />
+                </label>
+                <button
+                  className="botao"
+                  disabled={ocupado || !email}
+                  onClick={() => executar("vincular")}
+                >
+                  Vincular gestor
+                </button>
+              </>
             )}
           </div>
           {ong.status === "pendente" && (
             <div>
-              <h3>2. Decidir cadastro</h3>
+              <h3>Decidir cadastro</h3>
               <p>
                 {ong.lat == null || ong.lon == null
                   ? "Digite a latitude e a longitude conferidas no mapa. Os números em cinza nos campos são apenas exemplos."

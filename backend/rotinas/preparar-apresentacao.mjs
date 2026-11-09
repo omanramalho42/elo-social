@@ -169,13 +169,22 @@ for (const associacao of associacoes) {
     assert.equal(existente.nome, associacao.nome);
   }
   if (!id) {
-    const { projetos, lat, lon, ...pedido } = associacao;
-    const criado = exigir(
-      await requisitar("/api/cadastro", { metodo: "POST", corpo: pedido }),
-      201,
-      `cadastro real: ${associacao.nome}`,
-    );
-    id = criado.protocolo;
+    // Preparação da equipe: cadastros públicos agora exigem conta de gestor.
+    const { projetos, lat, lon, responsavel, referencias, ...pedido } = associacao;
+    const { data: criado, error: erroCriacao } = await banco
+      .from("ongs")
+      .insert({ ...pedido, cnpj: numeroCnpj })
+      .select("id")
+      .single();
+    if (erroCriacao || !criado) throw erroCriacao ?? new Error("ONG não criada.");
+    id = criado.id;
+    const { error: erroPrivado } = await banco
+      .from("ongs_privado")
+      .insert({ ong_id: id, responsavel, referencias });
+    if (erroPrivado) {
+      await banco.from("ongs").delete().eq("id", id);
+      throw erroPrivado;
+    }
     const pendente = exigir(
       await requisitar(`/api/ongs/${id}`),
       404,

@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, AREAS } from "../api";
-import { Campo, Introducao, Aviso } from "../componentes/Comum";
+import { Campo, Introducao, Carregando, Aviso } from "../componentes/Comum";
 import { ongVazia } from "../utilitarios/constantes";
 import { gerarCnpjFicticio } from "../utilitarios/formatadores";
 
 export default function CadastroOng() {
   const navegar = useNavigate();
+  const [autorizado, definirAutorizado] = useState(false);
+  const [erroAcesso, definirErroAcesso] = useState("");
   const [errosDosCampos, definirErrosDosCampos] = useState({});
   const [valoresDoFormulario, definirValoresDoFormulario] = useState({
       ...ongVazia,
@@ -17,8 +19,30 @@ export default function CadastroOng() {
     }),
     [ocupado, definirOcupado] = useState(false),
     [erro, definirErro] = useState("");
+  useEffect(() => {
+    let ativo = true;
+    api("/auth/me")
+      .then(async (conta) => {
+        if (!ativo) return;
+        if (conta.papel === "admin") navegar("/admin", { replace: true });
+        else if (conta.papel === "ong") {
+          const painel = await api("/painel");
+          if (!ativo) return;
+          if (painel.situacao === "sem_ong") definirAutorizado(true);
+          else navegar("/painel", { replace: true });
+        } else definirErroAcesso("Esta conta não pode cadastrar uma ONG.");
+      })
+      .catch((e) => {
+        if (!ativo) return;
+        if (e.status === 401)
+          navegar("/entrar?proximo=%2Fsolicitar", { replace: true });
+        else definirErroAcesso(e.message);
+      });
+    return () => { ativo = false; };
+  }, [navegar]);
   async function enviar(e) {
     e.preventDefault();
+    if (!autorizado) return;
     definirOcupado(true);
     definirErro("");
     definirErrosDosCampos({});
@@ -32,6 +56,10 @@ export default function CadastroOng() {
         { replace: true },
       );
     } catch (e) {
+      if (e.status === 401) {
+        navegar("/entrar?proximo=%2Fsolicitar", { replace: true });
+        return;
+      }
       definirErro(e.message);
       definirErrosDosCampos(e.fields || {});
     } finally {
@@ -55,6 +83,12 @@ export default function CadastroOng() {
     });
     definirErrosDosCampos({});
   }
+  if (!autorizado)
+    return (
+      <div className="conteudo">
+        {erroAcesso ? <Aviso>{erroAcesso}</Aviso> : <Carregando />}
+      </div>
+    );
   return (
     <div className="conteudo">
       <Introducao

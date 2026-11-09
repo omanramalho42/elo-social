@@ -68,8 +68,8 @@ export const openapi = {
     version: "1.0.0",
     description:
       "API do EloSocial: plataforma para ONGs de Fortaleza.\n\n" +
-      "**Fluxo (igual ao protótipo):** 1) `POST /api/cadastro` envia a ONG para conferência (sem entrar na conta); 2) o gestor cria conta em `POST /api/auth/registrar`; " +
-      "3) a equipe publica a ONG (`PATCH /api/admin/ongs/{id}`) e vincula o gestor (`POST /api/admin/ongs/{id}/gestor`); 4) `POST /api/auth/login` e use as rotas com cadeado.\n\n" +
+      "**Fluxo:** 1) o gestor cria conta em `POST /api/auth/registrar` e confirma o e-mail; 2) entra em `POST /api/auth/login`; " +
+      "3) `POST /api/cadastro` envia a ONG, vinculada à conta, para conferência; 4) a equipe aprova e publica em `PATCH /api/admin/ongs/{id}`.\n\n" +
       "**CRUD de ONGs:** Criação `POST /api/cadastro` · Leitura `GET /api/ongs` · Atualização `PATCH /api/painel` · Exclusão `DELETE /api/painel`.\n" +
       "**CRUD de Projetos:** Criação `POST /api/painel/projetos` · Leitura `GET /api/painel/projetos` · Atualização `PATCH /api/painel/projetos/{id}` · Exclusão `DELETE /api/painel/projetos/{id}`.",
   },
@@ -140,7 +140,8 @@ export const openapi = {
         tags: ["Cadastro e sessão"],
         summary: "Cadastrar ONG para conferência (criação)",
         description:
-          "Tela **Cadastrar ONG**. Não exige entrar na conta. A ONG entra como `pendente` e a equipe decide a publicação.",
+          "Tela **Cadastrar ONG**. Exige conta de gestor autenticada. A ONG entra como `pendente`, vinculada à conta, e a equipe decide a publicação.",
+        security: sessao,
         requestBody: corpo("CadastroOng", {
           nome: "Associação Exemplo",
           cnpj: "11.222.333/0001-81",
@@ -158,7 +159,9 @@ export const openapi = {
             description: "Pedido enviado",
             content: json("MensagemProtocolo"),
           },
-          409: erro("CNPJ já cadastrado"),
+          401: erro("Entre na conta para continuar"),
+          403: erro("Conta sem permissão de gestor"),
+          409: erro("CNPJ já cadastrado ou conta já vinculada a uma ONG"),
           422: erro("Dados inválidos"),
         },
       },
@@ -168,7 +171,7 @@ export const openapi = {
         tags: ["Cadastro e sessão"],
         summary: "Criar conta de gestor",
         description:
-          "Tela **Área da ONG > Cadastre-se**. Cria só a conta; a equipe vincula a uma ONG depois.",
+          "Tela **Área da ONG > Cadastre-se**. Cria a conta; após confirmar o e-mail e entrar, o gestor pode cadastrar sua ONG.",
         requestBody: corpo("Registrar", {
           nome: "Maria Silva",
           email: "maria@exemplo.org",

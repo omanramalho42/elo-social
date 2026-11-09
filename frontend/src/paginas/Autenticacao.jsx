@@ -20,7 +20,14 @@ export function Entrar() {
     try {
       await api("/auth/login", { method: "POST", body: valoresDoFormulario });
       const conta = await api("/auth/me");
-      navegar(conta.papel === "admin" ? "/admin" : "/painel");
+      const proximo = new URLSearchParams(window.location.search).get("proximo");
+      navegar(
+        conta.papel === "admin"
+          ? "/admin"
+          : proximo === "/solicitar"
+            ? "/solicitar"
+            : "/painel",
+      );
     } catch (e) {
       definirErro(e.message);
       definirErrosDosCampos(e.fields || {});
@@ -85,8 +92,8 @@ export function Entrar() {
           Ainda não tem conta? <Link to="/criar-conta">Criar acesso</Link>
         </p>
         <p className="dica">
-          A conta precisa ser vinculada a uma ONG pela equipe para liberar o
-          painel.
+          Cadastre sua ONG após entrar. O painel de edição será liberado após a
+          aprovação pela equipe.
         </p>
       </form>
     </div>
@@ -133,7 +140,7 @@ export function CriarConta() {
       <Introducao
         sobretitulo="ÁREA DA ONG"
         titulo="Crie seu acesso"
-        texto="O acesso será vinculado à instituição após a conferência da equipe."
+        texto="Confirme seu e-mail e entre na conta para cadastrar sua instituição."
       />
 
       <form className="cartao-formulario" onSubmit={enviar}>

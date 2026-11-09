@@ -318,7 +318,7 @@
       "name": "2 - OMAN - POST (criar)",
       "item": [
         {
-          "name": "Cadastrar ONG (sem login)",
+          "name": "Cadastrar ONG (após login do gestor)",
           "request": {
             "method": "POST",
             "header": [
@@ -341,7 +341,7 @@
                 "cadastro"
               ]
             },
-            "description": "",
+            "description": "Faça login como gestor antes de enviar esta solicitação. A ONG será vinculada à conta e ficará pendente de aprovação.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Associação Demonstração\",\n  \"cnpj\": \"11.222.333/0001-81\",\n  \"descricao\": \"Atendimento e acompanhamento de famílias da comunidade.\",\n  \"area\": \"Saúde\",\n  \"bairro\": \"Aldeota\",\n  \"endereco\": \"Rua Exemplo, 100\",\n  \"responsavel\": \"Maria Silva\",\n  \"contato\": \"contato@exemplo.org\",\n  \"site\": \"https://exemplo.org\",\n  \"referencias\": \"Instagram @exemplo e CNPJ na Receita Federal\"\n}",

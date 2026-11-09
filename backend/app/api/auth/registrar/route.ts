@@ -5,7 +5,7 @@ import { registrarSchema } from "@/biblioteca/validacoes";
 
 const RESPOSTA = {
   mensagem:
-    "Conta criada! Confirme seu e-mail. A equipe vincula sua conta a uma ONG depois da conferência.",
+    "Conta criada! Confirme seu e-mail, entre na conta e cadastre sua ONG para conferência.",
 };
 
 // Tela "Área da ONG > Cadastre-se": cria a conta de gestor (ainda sem ONG vinculada).

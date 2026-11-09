@@ -106,7 +106,7 @@ export default function PainelGestor() {
                 ? "A equipe analisará os dados da ONG e decidirá se ela será publicada."
                 : "A equipe analisará os dados da ONG. Crie sua conta com o e-mail de contato informado para que a administração possa vinculá-la após a análise."
               : usuario
-                ? "Cadastre uma ONG para que a equipe confira os dados e vincule o acesso ao painel."
+                ? "Cadastre sua ONG para que a equipe confira os dados e libere a edição no painel."
                 : "Depois de confirmar seu e-mail, entre na conta e cadastre a ONG para análise."}
           </p>
           {ongEnviada && cadastro.get("protocolo") && (

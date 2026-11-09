@@ -143,7 +143,10 @@ function CartaoRevisao({ ong, atualizar }) {
           {ong.status === "pendente" && (
             <div>
               <h3>2. Decidir cadastro</h3>
-              <p>Confira a posição no mapa para publicar a ONG.</p>
+              <p>
+                Digite a latitude e a longitude conferidas no mapa. Os números
+                em cinza nos campos são apenas exemplos; não estão preenchidos.
+              </p>
               <div className="coordenadas-administracao">
                 <label className="campo">
                   Latitude
@@ -170,6 +173,11 @@ function CartaoRevisao({ ong, atualizar }) {
                   />
                 </label>
               </div>
+              {(lat === "" || lon === "") && (
+                <p className="dica">
+                  Preencha os dois campos para liberar “Aprovar e publicar”.
+                </p>
+              )}
               <button
                 className="botao escuro"
                 disabled={ocupado || lat === "" || lon === ""}

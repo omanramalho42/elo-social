@@ -3,6 +3,11 @@ import {
   formatarCnpj,
   formatarTelefone,
   formatarContato,
+  formatarNome,
+  iniciarComMaiuscula,
+  cnpjValido,
+  celularValido,
+  digitos,
   somenteDominio,
   urlDoSite,
 } from "../utilitarios/formatadores";
@@ -85,7 +90,16 @@ export function Campo({
   prefixoUrl = false,
   ...restante
 }) {
-  const mensagem = erros[nome];
+  const valorAtual = valores[nome] ?? "";
+  const cnpjCompleto = nome === "cnpj" && digitos(valorAtual).length === 14;
+  const telefoneCompleto =
+    nome === "telefone" && digitos(valorAtual).length === 11;
+  const mensagem =
+    cnpjCompleto && !cnpjValido(valorAtual)
+      ? "CNPJ inválido. Confira os dígitos verificadores."
+      : telefoneCompleto && !celularValido(valorAtual)
+        ? "Informe DDD e celular de 9 dígitos."
+        : erros[nome];
   const propriedades = {
     id: nome,
     name: nome,
@@ -100,8 +114,20 @@ export function Campo({
             ? formatarTelefone(textoBruto)
             : nome === "contato"
               ? formatarContato(textoBruto)
-              : textoBruto;
+              : ["nome", "bairro", "responsavel", "endereco"].includes(nome)
+                ? formatarNome(textoBruto)
+                : nome === "descricao"
+                  ? iniciarComMaiuscula(textoBruto)
+                  : nome === "email"
+                    ? textoBruto.toLocaleLowerCase("pt-BR")
+                    : textoBruto;
       definirValores({ ...valores, [nome]: valor });
+    },
+    onBlur: () => {
+      if (["senha", "confirmarSenha"].includes(nome)) return;
+      const valor = valores[nome];
+      const ajustado = typeof valor === "string" ? valor.trim() : valor;
+      if (valor !== ajustado) definirValores({ ...valores, [nome]: ajustado });
     },
     required: obrigatorio,
     "aria-invalid": Boolean(mensagem),
@@ -126,6 +152,19 @@ export function Campo({
         </span>
       ) : (
         <input {...propriedades} type={tipo} />
+      )}
+      {nome === "cnpj" && (
+        <span className="ajuda-campo">
+          14 números; a pontuação aparece automaticamente.
+        </span>
+      )}
+      {nome === "telefone" && (
+        <span className="ajuda-campo">DDD e 9 números do celular.</span>
+      )}
+      {nome === "contato" && (
+        <span className="ajuda-campo">
+          Informe um e-mail ou celular com DDD e 9 números.
+        </span>
       )}
       {mensagem && (
         <span className="erro-campo" id={`${nome}-error`}>

@@ -73,6 +73,16 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 
 A solicitação de inclusão abre a área da ONG com o aviso **Em verificação**. A equipe confere os dados e decide no painel `/admin` se publica ou rejeita a ONG. O gestor deve criar a conta, confirmar o e-mail e ser vinculado pela equipe para gerenciar a ONG.
 
+## Regras dos cadastros
+
+- **CNPJ da ONG:** obrigatório, com 14 dígitos e dígitos verificadores válidos. A tela insere pontos, barra e hífen enquanto a pessoa digita; o servidor guarda somente os números. Um CNPJ já cadastrado é recusado.
+- **Celular da conta e contato telefônico da ONG:** DDD de dois dígitos seguido de celular com nove dígitos, começando por 9. A tela mostra `(85) 99999-1234`; o servidor também confere o número. O contato da ONG pode ser um e-mail válido em vez do celular.
+- **Nomes:** nome da instituição, responsável, bairro, endereço e nome do projeto recebem iniciais maiúsculas; palavras de ligação como “de” e “da” permanecem minúsculas. A descrição começa com maiúscula. O e-mail é mostrado em minúsculas.
+- **Site:** a tela mantém `https://` visível e recebe apenas o restante, como `exemplo.org.br`. Os campos de texto perdem espaços extras nas pontas ao sair deles.
+- **Outras exigências:** área de atuação deve ser uma das opções do formulário; descrição da ONG tem de 20 a 1.000 caracteres; referências públicas têm de 10 a 1.000. A senha da conta exige ao menos oito caracteres, uma letra e um número, e a confirmação deve coincidir.
+
+Não há campo de CPF na aplicação. As máscaras ajudam no preenchimento, mas as regras do servidor continuam valendo para chamadas feitas sem a interface.
+
 ## API
 
 A documentação está em [http://localhost:3000/docs](http://localhost:3000/docs). A coleção `backend/EloSocial.colecao-postman.json` pode ser importada no Postman.

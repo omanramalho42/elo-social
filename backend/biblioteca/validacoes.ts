@@ -47,6 +47,18 @@ const cnpj = z
   })
   .transform(limparCnpj);
 const email = z.string().trim().toLowerCase().email().max(254);
+const celularValido = (valor: string) =>
+  /^[1-9]\d9\d{8}$/.test(valor.replace(/\D/g, ""));
+const contato = z
+  .string()
+  .trim()
+  .min(5)
+  .max(120)
+  .refine(
+    (valor) => email.safeParse(valor).success || celularValido(valor),
+    "Use um e-mail ou celular com DDD e 9 dígitos",
+  )
+  .transform((valor) => (valor.includes("@") ? valor.toLowerCase() : valor));
 const senha = z
   .string()
   .min(8, "A senha precisa ter pelo menos 8 caracteres")
@@ -64,7 +76,7 @@ export const cadastroOngSchema = z
     bairro: texto(2, 80),
     endereco: opcional(texto(3, 200)),
     responsavel: texto(3, 120),
-    contato: texto(5, 120),
+    contato,
     site: opcional(site),
     referencias: texto(10, 1000),
   })
@@ -79,8 +91,8 @@ export const registrarSchema = z
       .string()
       .trim()
       .refine(
-        (t) => /^\d{10,11}$/.test(t.replace(/\D/g, "")),
-        "Telefone inválido",
+        celularValido,
+        "Use um celular com DDD e 9 dígitos",
       )
       .transform((t) => t.replace(/\D/g, "")),
     senha,
@@ -106,7 +118,7 @@ export const painelSchema = z
     area: z.enum(AREAS),
     descricao: texto(20, 1000),
     endereco: limpavel(texto(3, 200)),
-    contato: texto(5, 120),
+    contato,
     site: limpavel(site),
   })
   .strict();

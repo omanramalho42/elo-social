@@ -571,7 +571,7 @@ export const openapi = {
             description: "Opcional (endereço público)",
           },
           responsavel: { type: "string", minLength: 3, maxLength: 120 },
-          contato: { type: "string", minLength: 5, maxLength: 120 },
+          contato: { type: "string", minLength: 5, maxLength: 120, description: "E-mail ou celular com DDD e 9 dígitos" },
           site: {
             type: "string",
             description: "Opcional. Endereço https://... ou @perfil",
@@ -591,7 +591,7 @@ export const openapi = {
         properties: {
           nome: { type: "string" },
           email: { type: "string", format: "email" },
-          telefone: { type: "string", description: "10 ou 11 dígitos" },
+          telefone: { type: "string", description: "11 dígitos: DDD e celular de 9 dígitos; máscara opcional" },
           senha: {
             type: "string",
             minLength: 8,
@@ -645,7 +645,7 @@ export const openapi = {
           area: { type: "string", enum: AREAS },
           descricao: { type: "string", minLength: 20, maxLength: 1000 },
           endereco: { type: "string", nullable: true },
-          contato: { type: "string", minLength: 5, maxLength: 120 },
+          contato: { type: "string", minLength: 5, maxLength: 120, description: "E-mail ou celular com DDD e 9 dígitos" },
           site: { type: "string", nullable: true },
         },
       },

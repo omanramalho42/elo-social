@@ -87,6 +87,14 @@ test("criar conta: senhas precisam conferir e ser fortes; telefone é normalizad
   assert.equal(r.email, "m@exemplo.org");
   assert.equal(r.telefone, "85999991234");
   assert.equal(
+    registrarSchema.safeParse({ ...conta, telefone: "(85) 9999-1234" }).success,
+    false,
+  );
+  assert.equal(
+    registrarSchema.safeParse({ ...conta, telefone: "(85) 89999-1234" }).success,
+    false,
+  );
+  assert.equal(
     registrarSchema.safeParse({ ...conta, confirmarSenha: "outra1234" })
       .success,
     false,
@@ -99,6 +107,13 @@ test("criar conta: senhas precisam conferir e ser fortes; telefone é normalizad
     }).success,
     false,
   );
+});
+
+test("contato da ONG: aceita e-mail ou celular com DDD", () => {
+  assert.equal(cadastroOngSchema.parse({ ...pedido, contato: "CONTATO@EXEMPLO.ORG" }).contato, "contato@exemplo.org");
+  assert.equal(cadastroOngSchema.safeParse({ ...pedido, contato: "(85) 99999-1234" }).success, true);
+  assert.equal(cadastroOngSchema.safeParse({ ...pedido, contato: "(85) 9999-1234" }).success, false);
+  assert.equal(cadastroOngSchema.safeParse({ ...pedido, contato: "qualquer coisa" }).success, false);
 });
 
 test("painel: não aceita alterar situação, CNPJ, verificação nem posição; campo vazio limpa o opcional", () => {

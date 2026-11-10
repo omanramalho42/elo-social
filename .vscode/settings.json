@@ -7,7 +7,6 @@
     "**/*.tsbuildinfo": true,
     "**/next-env.d.ts": true,
     "**/package-lock.json": true,
-    "**/.env.local": true,
     "**/.vscode": true
   }
 }

@@ -2,28 +2,29 @@
   "name": "elosocial-servidor",
   "version": "1.0.0",
   "private": true,
+  "engines": { "node": "22.x" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test testes/openapi.teste.ts testes/origens.teste.ts testes/validacoes.teste.ts",
+    "test": "tsx --test testes/*.teste.ts",
     "testar:fluxo": "node rotinas/testar-fluxo.mjs",
     "preparar:apresentacao": "node rotinas/preparar-apresentacao.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "0.5.2",
-    "@supabase/supabase-js": "2.45.4",
-    "next": "14.2.15",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "zod": "3.23.8"
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.119.0",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
-    "@types/node": "20.14.0",
-    "@types/react": "18.3.3",
-    "tsx": "4.19.1",
-    "typescript": "5.5.4"
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
   }
 }

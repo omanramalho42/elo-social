@@ -7,7 +7,7 @@ import { enderecosAplicacao } from "@/biblioteca/enderecos";
 export const POST = rota(async (requisicao) => {
   const { email } = recuperarSenhaSchema.parse(await lerJson(requisicao));
   const enderecoFrontend = enderecosAplicacao().frontend;
-  const { error: erro } = await supabaseDoUsuario().auth.resetPasswordForEmail(
+  const { error: erro } = await (await supabaseDoUsuario()).auth.resetPasswordForEmail(
     email,
     {
       redirectTo: `${enderecoFrontend}/redefinir-senha`,

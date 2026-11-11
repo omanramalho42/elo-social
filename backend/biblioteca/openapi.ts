@@ -85,6 +85,15 @@ export const openapi = {
   ],
 
   paths: {
+    "/api/saude": {
+      get: {
+        summary: "Verificar disponibilidade do servidor e leitura do banco",
+        responses: {
+          "200": { description: "Servidor configurado e banco acessível" },
+          "503": { description: "Configuração ou banco indisponível, sem exposição de credenciais" },
+        },
+      },
+    },
     "/api/ongs": {
       get: {
         tags: ["ONGs (público)"],

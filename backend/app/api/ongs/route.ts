@@ -16,7 +16,7 @@ export const GET = rota(async (requisicao) => {
   const parametros = Object.fromEntries(new URL(requisicao.url).searchParams);
   const { q, area, bairro, pagina, limite } = filtroOngsSchema.parse(parametros);
 
-  let consulta = supabaseDoUsuario()
+  let consulta = (await supabaseDoUsuario())
     .from("ongs")
     .select(CAMPOS, { count: "exact" })
     .eq("status", "aprovada")

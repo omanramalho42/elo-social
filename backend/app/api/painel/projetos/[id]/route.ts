@@ -4,9 +4,9 @@ import { idSchema, projetoSchema } from "@/biblioteca/validacoes";
 
 // O RLS só deixa apagar projetos da própria ONG; de outra ONG simplesmente não encontra nada.
 export const DELETE = rota(
-  async (_req, { params: parametros }: { params: { id: string } }) => {
+  async (_req, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirGestorAprovado();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "Projeto não encontrado.");
 
     const { data: dados, error: erro } = await supabase
@@ -22,9 +22,9 @@ export const DELETE = rota(
 
 // Editar o nome de um projeto (UPDATE). O RLS só permite nos projetos da própria ONG.
 export const PATCH = rota(
-  async (requisicao, { params: parametros }: { params: { id: string } }) => {
+  async (requisicao, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirGestorAprovado();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "Projeto não encontrado.");
     const dados = projetoSchema.parse(await lerJson(requisicao));
 

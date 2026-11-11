@@ -35,8 +35,7 @@ const site = z
   );
 const cnpj = z
   .string({
-    required_error: "Informe o CNPJ",
-    invalid_type_error: "Informe o CNPJ",
+    error: "Informe o CNPJ",
   })
   .trim()
   .superRefine((valor, contexto) => {

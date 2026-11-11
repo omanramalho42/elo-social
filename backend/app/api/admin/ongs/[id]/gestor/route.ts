@@ -5,17 +5,18 @@ import { supabaseAdministrador } from "@/biblioteca/supabase/administrador";
 
 // Vincula a conta de um gestor (pelo e-mail) a uma ONG. Só a equipe faz isso, depois da conferência.
 export const POST = rota(
-  async (requisicao, { params: parametros }: { params: { id: string } }) => {
+  async (requisicao, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirAdministrador();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "ONG não encontrada.");
     const { email } = gestorSchema.parse(await lerJson(requisicao));
 
-    const { data: perfil } = await supabase
+    const { data: perfil, error: erroPerfil } = await supabase
       .from("perfis")
       .select("user_id, papel")
       .eq("email", email)
       .maybeSingle();
+    if (erroPerfil) throw erroPerfil;
     if (!perfil) throw new ErroApi(404, "Nenhuma conta com esse e-mail.");
     if (perfil.papel !== "ong")
       throw new ErroApi(422, "O e-mail precisa pertencer a uma conta de gestor.");
@@ -41,9 +42,9 @@ export const POST = rota(
 
 // Remove o vínculo do gestor com a ONG.
 export const DELETE = rota(
-  async (_req, { params: parametros }: { params: { id: string } }) => {
+  async (_req, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirAdministrador();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "ONG não encontrada.");
     const { data: dados, error: erro } = await supabase
       .from("ongs")

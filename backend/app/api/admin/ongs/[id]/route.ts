@@ -9,9 +9,9 @@ import {
 
 // Aprovar/publicar (informando a posição no mapa e a situação dos dados) ou rejeitar (com motivo).
 export const PATCH = rota(
-  async (requisicao, { params: parametros }: { params: { id: string } }) => {
+  async (requisicao, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirAdministrador();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "ONG não encontrada.");
     const dados = moderacaoSchema.parse(await lerJson(requisicao));
 
@@ -40,9 +40,9 @@ export const PATCH = rota(
 
 // A equipe pode excluir qualquer ONG (DELETE), por exemplo um cadastro falso.
 export const DELETE = rota(
-  async (requisicao, { params: parametros }: { params: { id: string } }) => {
+  async (requisicao, { params }: { params: Promise<{ id: string }> }) => {
     const { supabase } = await exigirAdministrador();
-    const id = idSchema.safeParse(parametros.id);
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "ONG não encontrada.");
     confirmarExclusaoSchema.parse(await lerJson(requisicao));
 
@@ -54,8 +54,11 @@ export const DELETE = rota(
     if (erro) throw erro;
     if (!dados?.length) throw new ErroApi(404, "ONG não encontrada.");
 
-    if (dados[0].owner_id)
-      await supabaseAdministrador().auth.admin.deleteUser(dados[0].owner_id);
+    if (dados[0].owner_id) {
+      const { error: erroConta } = await supabaseAdministrador().auth.admin.deleteUser(dados[0].owner_id);
+      if (erroConta)
+        throw new ErroApi(503, "A ONG foi excluída, mas a conta do gestor não pôde ser removida. Avise a equipe responsável.");
+    }
     return ok({ mensagem: "ONG excluída." });
   },
 );

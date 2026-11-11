@@ -14,7 +14,7 @@ export const POST = rota(async (requisicao) => {
   const d = registrarSchema.parse(await lerJson(requisicao));
 
   const enderecoInterface = enderecosAplicacao().frontend;
-  const { data: dados, error: erro } = await supabaseDoUsuario().auth.signUp({
+  const { data: dados, error: erro } = await (await supabaseDoUsuario()).auth.signUp({
     email: d.email,
     password: d.senha,
     options: { emailRedirectTo: `${enderecoInterface}/confirmar-email` },

@@ -7,7 +7,7 @@ export async function confirmarEndereco(
   dados: z.infer<typeof confirmarEnderecoSchema>,
   mensagemErro: string,
 ) {
-  const supabase = supabaseDoUsuario();
+  const supabase = await supabaseDoUsuario();
   let resultado;
   try {
     resultado =
@@ -31,7 +31,7 @@ export async function confirmarEndereco(
 }
 
 export async function exigirUsuario() {
-  const supabase = supabaseDoUsuario();
+  const supabase = await supabaseDoUsuario();
   const { data: dados, error: erro } = await supabase.auth.getUser(); // valida o token no servidor do Supabase
   if (erro || !dados.user) throw new ErroApi(401, "Entre na sua conta para continuar.");
   return { supabase, user: dados.user };
@@ -39,11 +39,12 @@ export async function exigirUsuario() {
 
 export async function exigirAdministrador() {
   const contexto = await exigirUsuario();
-  const { data: dados } = await contexto.supabase
+  const { data: dados, error: erro } = await contexto.supabase
     .from("perfis")
     .select("papel")
     .eq("user_id", contexto.user.id)
     .maybeSingle();
+  if (erro) throw erro;
   if (dados?.papel !== "admin")
     throw new ErroApi(403, "Acesso restrito à equipe.");
   return contexto;

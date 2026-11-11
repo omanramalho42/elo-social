@@ -87,6 +87,8 @@ O código local agora centraliza os endereços em `backend/biblioteca/enderecos.
 
 Validação desta alteração: 17 testes do backend e checagem TypeScript aprovados, incluindo reprodução de produção sem `FRONTEND_URL`, rejeição de origens externas/ausentes e preservação de hospedagem alternativa. Não foi executado envio real de e-mail. Correção ainda não publicada; o usuário informou não ter acesso à Vercel. O deploy pode ocorrer pelo GitHub se a integração automática estiver configurada, ou pela pessoa responsável pela hospedagem. A versão hospedada não foi alterada.
 
+Atualização: o commit `6785d3c` foi encontrado em `origin/main` com a correção e a preparação do ambiente. A compilação local do backend também passou. A consulta pública de status desse commit no GitHub mostrou `Vercel – elo-social` concluído e `Vercel – elo-social-6qwo` com falha de deploy (`dpl_6EirPy4CWTavzh3Ck8KpMXAhbP6o`). A API hospedada continua retornando 403 para o domínio oficial do frontend. A publicação automática existe, mas o backend corrigido ainda não entrou em produção. O motivo detalhado da falha não consta no status público; consultar os logs da Vercel com a conta responsável antes de atribuir uma causa.
+
 Na raiz do repositório, em um novo terminal Windows:
 
 ```powershell

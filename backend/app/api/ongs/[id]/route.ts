@@ -4,11 +4,11 @@ import { idSchema } from "@/biblioteca/validacoes";
 
 // Perfil público: sobre a instituição + projetos.
 export const GET = rota(
-  async (_req, { params: parametros }: { params: { id: string } }) => {
-    const id = idSchema.safeParse(parametros.id);
+  async (_req, { params }: { params: Promise<{ id: string }> }) => {
+    const id = idSchema.safeParse((await params).id);
     if (!id.success) throw new ErroApi(404, "ONG não encontrada.");
 
-    const { data: dados, error: erro } = await supabaseDoUsuario()
+    const { data: dados, error: erro } = await (await supabaseDoUsuario())
       .from("ongs")
       .select(
         "id, nome, bairro, area, descricao, endereco, contato, cnpj, site, lat, lon, verificacao, projetos(id, nome, descricao)",

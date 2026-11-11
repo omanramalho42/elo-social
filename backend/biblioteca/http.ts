@@ -35,11 +35,36 @@ export function exigirMesmaOrigem(requisicao: Request) {
 
 export async function lerJson(requisicao: Request): Promise<unknown> {
   const tipo = requisicao.headers.get("content-type") ?? "";
-  if (!tipo.includes("application/json")) throw new ErroApi(415, "Envie JSON.");
-  const texto = await requisicao.text();
-  if (texto.length > 20_000) throw new ErroApi(413, "Corpo grande demais.");
+  if (tipo.split(";")[0].trim().toLowerCase() !== "application/json")
+    throw new ErroApi(415, "Envie JSON.");
+  const limite = 20_000;
+  const leitor = requisicao.body?.getReader();
+  const partes: Uint8Array[] = [];
+  let tamanho = 0;
+  if (leitor) {
+    try {
+      while (true) {
+        const { done, value } = await leitor.read();
+        if (done) break;
+        tamanho += value.byteLength;
+        if (tamanho > limite) {
+          await leitor.cancel();
+          throw new ErroApi(413, "Corpo grande demais.");
+        }
+        partes.push(value);
+      }
+    } finally {
+      leitor.releaseLock();
+    }
+  }
+  const bytes = new Uint8Array(tamanho);
+  let deslocamento = 0;
+  for (const parte of partes) {
+    bytes.set(parte, deslocamento);
+    deslocamento += parte.byteLength;
+  }
   try {
-    return JSON.parse(texto);
+    return JSON.parse(new TextDecoder().decode(bytes));
   } catch {
     throw new ErroApi(400, "JSON inválido.");
   }

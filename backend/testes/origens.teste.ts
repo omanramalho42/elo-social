@@ -35,6 +35,12 @@ test("endereços locais e hospedagem alternativa preservam seus retornos", () =>
   });
 });
 
+test("endereços normalizam barra final e rejeitam protocolos não HTTP", () => {
+  assert.equal(enderecosAplicacao({ FRONTEND_URL: " https://site.example.org/ " }).frontend, "https://site.example.org");
+  assert.throws(() => enderecosAplicacao({ FRONTEND_URL: "javascript:alert(1)" }));
+  assert.throws(() => enderecosAplicacao({ FRONTEND_URL: "https://usuario:senha@site.example.org" }));
+});
+
 test("requisições aceitam as origens do frontend e do backend", () => {
   const siteAnterior = process.env.SITE_URL;
   const interfaceAnterior = process.env.FRONTEND_URL;

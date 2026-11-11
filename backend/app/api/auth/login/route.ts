@@ -6,7 +6,7 @@ export const POST = rota(async (requisicao) => {
   const { email, senha } = entrarSchema.parse(await lerJson(requisicao));
 
   const { data: dados, error: erro } =
-    await supabaseDoUsuario().auth.signInWithPassword({
+    await (await supabaseDoUsuario()).auth.signInWithPassword({
       email,
       password: senha,
     });

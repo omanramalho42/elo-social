@@ -1,12 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { configuracaoSupabase } from "../configuracao";
 
 /** Cliente com a sessão do usuário: TODAS as consultas passam pelo RLS do banco. */
-export function supabaseDoUsuario() {
-  const store = cookies();
+export async function supabaseDoUsuario() {
+  const store = await cookies();
+  const configuracao = configuracaoSupabase();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    configuracao.url,
+    configuracao.anon,
     {
       cookies: {
         getAll: () => store.getAll(),

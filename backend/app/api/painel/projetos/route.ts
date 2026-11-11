@@ -5,11 +5,12 @@ import { projetoSchema } from "@/biblioteca/validacoes";
 // Lista os projetos da ONG do gestor logado (Read).
 export const GET = rota(async () => {
   const { supabase, user: usuario } = await exigirUsuario();
-  const { data: ong } = await supabase
+  const { data: ong, error: erroOng } = await supabase
     .from("ongs")
     .select("id")
     .eq("owner_id", usuario.id)
     .maybeSingle();
+  if (erroOng) throw erroOng;
   if (!ong) throw new ErroApi(404, "Nenhuma ONG vinculada a esta conta.");
 
   const { data: dados, error: erro } = await supabase
@@ -22,15 +23,8 @@ export const GET = rota(async () => {
 });
 
 export const POST = rota(async (requisicao) => {
-  const { supabase, user: usuario } = await exigirGestorAprovado();
+  const { supabase, ong } = await exigirGestorAprovado();
   const { nome, descricao } = projetoSchema.parse(await lerJson(requisicao));
-
-  const { data: ong } = await supabase
-    .from("ongs")
-    .select("id")
-    .eq("owner_id", usuario.id)
-    .maybeSingle();
-  if (!ong) throw new ErroApi(404, "Nenhuma ONG vinculada a esta conta.");
 
   const { data: dados, error: erro } = await supabase
     .from("projetos")

@@ -50,8 +50,10 @@ export const DELETE = rota(async (requisicao) => {
   if (!dados?.length)
     throw new ErroApi(404, "Nenhuma ONG vinculada a esta conta.");
 
-  await supabaseAdministrador().auth.admin.deleteUser(usuario.id); // libera o e-mail para um novo cadastro
-  await supabase.auth.signOut();
+  const { error: erroConta } = await supabaseAdministrador().auth.admin.deleteUser(usuario.id);
+  if (erroConta)
+    throw new ErroApi(503, "A ONG foi excluída, mas a conta não pôde ser removida. Avise a equipe responsável.");
+  await supabase.auth.signOut({ scope: "local" });
   return ok({ mensagem: "ONG e conta excluídas." });
 });
 

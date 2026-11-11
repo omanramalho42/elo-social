@@ -1,35 +1,49 @@
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { parseEnv } from "node:util";
 import { createClient } from "@supabase/supabase-js";
 import { gerarCnpjFicticio } from "../../frontend/src/utilitarios/formatadores.js";
 
-// Ensaio integrado opcional. Usa as contas de demonstração e remove os dados que criar.
+// Ensaio integrado opcional. Cria suas próprias contas e remove apenas seus dados.
+// Não envia e-mails: a confirmação usa links gerados administrativamente.
 if (process.env.ELOSOCIAL_TESTE_INTEGRACAO !== "1") {
   throw new Error("Defina ELOSOCIAL_TESTE_INTEGRACAO=1 para executar o ensaio.");
 }
 
-const configuracao = Object.fromEntries(
-  readFileSync(new URL("../.env.local", import.meta.url), "utf8")
-    .split(/\r?\n/)
-    .map((linha) => linha.match(/^([A-Z_]+)=(.*)$/))
-    .filter(Boolean)
-    .map((partes) => [partes[1], partes[2].replace(/^['"]|['"]$/g, "")]),
-);
-const origem = "http://localhost:3000";
+const configuracao = parseEnv(readFileSync(new URL("../.env.local", import.meta.url), "utf8"));
+const base = process.env.ELOSOCIAL_TESTE_URL || "http://localhost:3000";
+if (!["localhost", "127.0.0.1", "[::1]"].includes(new URL(base).hostname))
+  throw new Error("O ensaio só pode chamar uma API local.");
+const origem = configuracao.SITE_URL || "http://localhost:3000";
+const frontend = configuracao.FRONTEND_URL || "http://127.0.0.1:5173";
 const administrador = createClient(
   configuracao.NEXT_PUBLIC_SUPABASE_URL,
   configuracao.SUPABASE_SERVICE_ROLE_KEY,
   { auth: { persistSession: false, autoRefreshToken: false } },
 );
 const codigo = randomBytes(5).toString("hex");
-const email = `elo-teste-${codigo}@demo.org`;
+let email;
 const senha = `Teste${randomBytes(8).toString("hex")}`;
 const nome = `ONG Teste Integrado ${codigo}`;
 const sessaoAdministrador = new Map();
 const sessaoGestor = new Map();
 const pedidos = [];
+const contasCriadas = [];
 let usuarioId;
+let verificacoes = 0;
+
+async function criarContaDeTeste(papel, confirmada = true) {
+  const endereco = `elo-teste-${papel}-${codigo}-${contasCriadas.length}@example.com`;
+  const { data, error } = await administrador.auth.admin.createUser({ email: endereco, password: senha, email_confirm: confirmada });
+  if (error || !data.user) throw new Error("Não foi possível criar a conta temporária de teste.");
+  contasCriadas.push(data.user.id);
+  const { error: erroPerfil } = await administrador.from("perfis").insert({
+    user_id: data.user.id, papel, nome: "Conta temporária de teste", email: endereco, telefone: "85999990000",
+  });
+  if (erroPerfil) throw new Error("Não foi possível criar o perfil temporário de teste.");
+  return { id: data.user.id, email: endereco };
+}
 
 async function requisitar(caminho, { metodo = "GET", corpo, sessao } = {}) {
   const cabecalhos = { Origin: origem };
@@ -38,11 +52,12 @@ async function requisitar(caminho, { metodo = "GET", corpo, sessao } = {}) {
     cabecalhos.Cookie = [...sessao]
       .map(([chave, valor]) => `${chave}=${valor}`)
       .join("; ");
-  const resposta = await fetch(`${origem}${caminho}`, {
+  const resposta = await fetch(`${base}${caminho}`, {
     method: metodo,
     headers: cabecalhos,
     body: corpo === undefined ? undefined : JSON.stringify(corpo),
     redirect: "manual",
+    signal: AbortSignal.timeout(30000),
   });
   for (const item of resposta.headers.getSetCookie()) {
     const [par, ...atributos] = item.split(";");
@@ -65,6 +80,7 @@ function conferir(resposta, esperado, etapa) {
     `${etapa}: HTTP ${resposta.codigo}: ${resposta.dados.erro || "sem mensagem"}`,
   );
   console.log(`OK: ${etapa}`);
+  verificacoes++;
   return resposta.dados;
 }
 
@@ -73,7 +89,7 @@ async function abrirEnderecoGerado(tipo, caminho) {
     await administrador.auth.admin.generateLink({
       type: tipo,
       email,
-      options: { redirectTo: `http://127.0.0.1:5173/${caminho}` },
+      options: { redirectTo: `${frontend}/${caminho}` },
     });
   if (erroEndereco || !endereco.properties)
     throw erroEndereco ?? new Error("Endereço de teste não gerado.");
@@ -82,7 +98,7 @@ async function abrirEnderecoGerado(tipo, caminho) {
   });
   assert.equal(resposta.status, 303);
   const destino = new URL(resposta.headers.get("location"));
-  assert.equal(destino.origin, "http://127.0.0.1:5173");
+  assert.equal(destino.origin, new URL(frontend).origin);
   assert.equal(destino.pathname, `/${caminho}`);
   const fragmento = new URLSearchParams(destino.hash.slice(1));
   if (destino.searchParams.has("code"))
@@ -157,49 +173,18 @@ try {
   );
   assert.equal(lista.total, 0);
 
-  const resultadoCadastro = await requisitar("/api/auth/registrar", {
-      metodo: "POST",
-      sessao: sessaoGestor,
-      corpo: {
-        nome: "Gestor de Teste",
-        email,
-        telefone: "85999990000",
-        senha,
-        confirmarSenha: senha,
-      },
-    });
-  if (resultadoCadastro.codigo === 201) {
-    conferir(resultadoCadastro, 201, "criação de conta pelo formulário");
-    const { data: perfil, error: erroPerfil } = await administrador
-      .from("perfis")
-      .select("user_id")
-      .eq("email", email)
-      .single();
-    if (erroPerfil || !perfil) throw erroPerfil ?? new Error("Perfil não criado.");
-    usuarioId = perfil.user_id;
-  } else {
-    conferir(resultadoCadastro, 429, "limite de e-mail informado corretamente");
-    const { data: criada, error: erroCriacao } =
-      await administrador.auth.admin.createUser({ email, password: senha });
-    if (erroCriacao || !criada.user)
-      throw erroCriacao ?? new Error("Conta de teste não criada.");
-    usuarioId = criada.user.id;
-    const { error: erroPerfil } = await administrador.from("perfis").insert({
-      user_id: usuarioId,
-      papel: "ong",
-      nome: "Gestor de Teste",
-      email,
-      telefone: "85999990000",
-    });
-    if (erroPerfil) throw erroPerfil;
-    console.log("OK: conta temporária criada sem envio de e-mail");
-  }
+  conferir(await requisitar("/api/saude"), 200, "servidor e banco disponíveis");
+  conferir(await requisitar("/api/auth/registrar", { metodo: "POST", corpo: {} }), 422, "cadastro inválido rejeitado sem enviar e-mail");
+  const gestorTemporario = await criarContaDeTeste("ong", false);
+  usuarioId = gestorTemporario.id;
+  email = gestorTemporario.email;
+  const adminTemporario = await criarContaDeTeste("admin");
 
   conferir(
     await requisitar("/api/auth/login", {
       metodo: "POST",
       sessao: sessaoAdministrador,
-      corpo: { email: "admin@demo.org", senha: "Demo12345" },
+      corpo: { email: adminTemporario.email, senha },
     }),
     200,
     "entrada da administração",
@@ -502,7 +487,18 @@ try {
     200,
     "entrada com a nova senha",
   );
-  console.log("Fluxo integrado concluído.");
+  conferir(await requisitar("/api/painel", {
+    metodo: "DELETE", sessao: sessaoGestor, corpo: { confirmar: false },
+  }), 422, "exclusão exige confirmação");
+  conferir(await requisitar("/api/painel", {
+    metodo: "DELETE", sessao: sessaoGestor, corpo: { confirmar: true },
+  }), 200, "exclusão da ONG e conta temporárias pelo gestor");
+  conferir(await requisitar(`/api/ongs/${primeiro.protocolo}`), 404, "ONG excluída removida do perfil público");
+  conferir(await requisitar("/api/auth/me", { sessao: sessaoGestor }), 401, "conta excluída sem acesso");
+  conferir(await requisitar(`/api/admin/ongs/${segundo.id}`, {
+    metodo: "DELETE", sessao: sessaoAdministrador, corpo: { confirmar: true },
+  }), 200, "exclusão de pedido temporário pela administração");
+  console.log(`Fluxo integrado concluído: ${verificacoes} verificações HTTP.`);
 } finally {
   const falhas = [];
   for (const id of pedidos) {
@@ -512,9 +508,11 @@ try {
       .eq("id", id);
     if (erroExclusao) falhas.push(`pedido ${id}: ${erroExclusao.message}`);
   }
-  if (usuarioId) {
-    const { error: erroExclusao } = await administrador.auth.admin.deleteUser(usuarioId);
-    if (erroExclusao) falhas.push(`conta: ${erroExclusao.message}`);
+  for (const contaId of contasCriadas) {
+    // Pode ter sido removida pela própria API durante o teste de exclusão.
+    const { error: erroExclusao } = await administrador.auth.admin.deleteUser(contaId);
+    if (erroExclusao && erroExclusao.status !== 404 && erroExclusao.code !== "user_not_found")
+      falhas.push("falha ao remover uma conta temporária");
   }
   const { data: restantes, error: erroConsulta } = await administrador
     .from("ongs")

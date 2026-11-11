@@ -16,10 +16,10 @@ export function enderecosAplicacao(ambiente: Ambiente = process.env) {
   };
   return {
     backend: origem(ambiente.SITE_URL || (producao
-      ? "https://elo-social-6qwo.vercel.app"
+      ? "https://elo-social-api-jpbraga.vercel.app"
       : "http://localhost:3000")),
     frontend: origem(ambiente.FRONTEND_URL || (producao
-      ? "https://elo-social-chi.vercel.app"
+      ? "https://elo-social-web-jpbraga.vercel.app"
       : "http://127.0.0.1:5173")),
   };
 }

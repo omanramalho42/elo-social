@@ -1,5 +1,28 @@
 # Retomada do EloSocial
 
+## Recuperação de senha — pendência no Supabase Auth
+
+O usuário recebeu o e-mail, mas o link terminou em localhost. Diagnóstico sem e-mail, com token explicitamente inválido: `/auth/v1/verify` recebeu `redirect_to=https://elo-social-web-jpbraga.vercel.app/redefinir-senha` e respondeu 303 para `http://localhost:3000/`. Nenhum token real foi usado ou registrado. Corrigir URL Configuration do Supabase: Site URL do frontend atual e Redirect URLs exatas para `/redefinir-senha` e `/confirmar-email`, preservando retornos locais necessários. O painel Supabase exigiu login; nenhuma configuração foi alterada. Após o ajuste, solicitar novo e-mail e validar no mesmo navegador.
+
+## Publicação na conta própria — jpbraga-dev
+
+Publicados via Vercel CLI, com autorização do usuário, dois projetos a partir das respectivas pastas locais:
+
+- Site: `https://elo-social-web-jpbraga.vercel.app`, projeto `elo-social-web-jpbraga`.
+- API: `https://elo-social-api-jpbraga.vercel.app`, projeto `elo-social-api-jpbraga`.
+
+As três credenciais Supabase foram cadastradas no ambiente Production do backend após confirmação específica do usuário. A service role foi armazenada como Secret. URLs e chave anônima com prefixo NEXT_PUBLIC foram armazenadas como Config, conforme exigência da Vercel para esse prefixo. Nenhuma credencial foi exibida ou incluída no pacote de código; `.vercelignore` exclui arquivos de ambiente privados.
+
+Verificações online aprovadas: site e `/catalogo` HTTP 200; saúde direta e pelo frontend com `{"situacao":"ok"}`; listagem com três instituições; recuperação com origem do novo site passou pela proteção e retornou 422 para corpo vazio, sem envio de e-mail. Navegador confirmou o catálogo com as três instituições. Login real e entrega de e-mails não foram repetidos nessa publicação. Retornos do Supabase Auth para o novo domínio precisam ser conferidos antes de validar confirmação/recuperação por e-mail real.
+
+A integração do GitHub da nova conta não conseguiu vincular `omanramalho42/elo-social`. A publicação atual foi feita a partir do código local; não foi criada cópia do repositório. Pushes no GitHub ainda não publicam automaticamente nestes dois projetos. Para isso, o responsável pelo repositório deverá autorizar a integração apropriada. Os projetos CLI usam a pasta enviada como raiz (`.`), com framework definido no respectivo `vercel.json`.
+
+## Novos endereços da hospedagem
+
+O usuário informou `https://elo-social-backend.vercel.app` e `https://elo-social-frontend.vercel.app`. A consulta confirmou API `/api/ongs` e documentação `/docs` do novo backend com HTTP 200 e a origem do novo frontend aceita na recuperação (corpo vazio rejeitado por validação 422, sem envio de e-mail). O redirecionamento de páginas do backend para o frontend é previsto em `app/[[...caminho]]/page.tsx`.
+
+O frontend publicado ainda encaminhava `/api` ao backend antigo removido, retornando `DEPLOYMENT_NOT_FOUND`. Os dois rewrites versionados e os endereços padrão do backend foram atualizados localmente para os novos domínios, junto dos exemplos e testes. Precisam ser enviados ao GitHub e publicados. A rota `/api/saude` do backend novo retornou 404 na consulta: confirmar que seu projeto está publicando o commit atual, que inclui essa rota. Não foi alterada configuração de Vercel nem de Supabase nesta etapa.
+
 ## Deploys separados no mesmo repositório
 
 Conforme orientação do usuário, manter um único repositório com dois serviços independentes: Vite em `frontend/` e Next.js em `backend/`. Ambos possuem configuração Vercel, manifestos e locks próprios. A importação do frontend pelo ensaio do backend foi removida; o gerador de CNPJ temporário agora fica em `backend/rotinas/apoio/`.

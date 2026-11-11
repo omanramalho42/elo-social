@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { parseEnv } from "node:util";
 import { createClient } from "@supabase/supabase-js";
-import { gerarCnpjFicticio } from "../../frontend/src/utilitarios/formatadores.js";
+import { gerarCnpjFicticio } from "./apoio/cnpj-ficticio.mjs";
 
 // Ensaio integrado opcional. Cria suas próprias contas e remove apenas seus dados.
 // Não envia e-mails: a confirmação usa links gerados administrativamente.

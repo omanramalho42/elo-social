@@ -1,5 +1,13 @@
 # Retomada do EloSocial
 
+## Deploys separados no mesmo repositório
+
+Conforme orientação do usuário, manter um único repositório com dois serviços independentes: Vite em `frontend/` e Next.js em `backend/`. Ambos possuem configuração Vercel, manifestos e locks próprios. A importação do frontend pelo ensaio do backend foi removida; o gerador de CNPJ temporário agora fica em `backend/rotinas/apoio/`.
+
+Na Vercel, importar o mesmo repositório em dois projetos, com Root Directory `frontend` e `backend`, respectivamente. A configuração da raiz permanece apenas como compatibilidade para o frontend antigo. Se a API ganhar outro domínio, atualizar o encaminhamento no frontend e as URLs de ambiente do backend antes de testar autenticação. O README contém a tabela de configuração e a conferência via `/api/saude`. Nenhum projeto da Vercel foi criado ou alterado nesta etapa.
+
+Verificação desta separação: gerador local de dados temporários conferido; nenhuma referência relativa entre as duas pastas encontrada; `npm run verificar` aprovado com 25 testes, build dos dois serviços e TypeScript do backend. O ensaio com escrita no Supabase não foi repetido para essa alteração de organização.
+
 Registro de 11/11/2026 para permitir continuar o projeto sem depender do chat anterior.
 
 ## Contexto recuperado

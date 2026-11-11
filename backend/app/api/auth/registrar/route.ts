@@ -2,6 +2,7 @@ import { lerJson, ok, rota, ErroApi } from "@/biblioteca/http";
 import { supabaseAdministrador } from "@/biblioteca/supabase/administrador";
 import { supabaseDoUsuario } from "@/biblioteca/supabase/servidor";
 import { registrarSchema } from "@/biblioteca/validacoes";
+import { enderecosAplicacao } from "@/biblioteca/enderecos";
 
 const RESPOSTA = {
   mensagem:
@@ -12,7 +13,7 @@ const RESPOSTA = {
 export const POST = rota(async (requisicao) => {
   const d = registrarSchema.parse(await lerJson(requisicao));
 
-  const enderecoInterface = process.env.FRONTEND_URL || process.env.SITE_URL;
+  const enderecoInterface = enderecosAplicacao().frontend;
   const { data: dados, error: erro } = await supabaseDoUsuario().auth.signUp({
     email: d.email,
     password: d.senha,

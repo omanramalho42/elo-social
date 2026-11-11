@@ -1,0 +1,12 @@
+{
+  "name": "elosocial",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:api": "npm --prefix backend run dev -- --port 3000",
+    "dev:interface": "npm --prefix frontend run dev",
+    "diagnostico": "node rotinas/diagnostico.mjs",
+    "verificar": "node rotinas/verificar.mjs",
+    "test": "npm --prefix backend test && npm --prefix frontend test"
+  }
+}

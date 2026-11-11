@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { enderecosAplicacao } from "./enderecos";
 
 export class ErroApi extends Error {
   constructor(
@@ -24,8 +25,8 @@ export function exigirMesmaOrigem(requisicao: Request) {
   } catch {
     throw new ErroApi(403, "Origem não permitida.");
   }
-  const permitidas = [process.env.SITE_URL, process.env.FRONTEND_URL]
-    .filter((valor): valor is string => Boolean(valor))
+  const enderecos = enderecosAplicacao();
+  const permitidas = [enderecos.backend, enderecos.frontend]
     .map((valor) => new URL(valor).origin);
   if (!permitidas.includes(origemRecebida)) {
     throw new ErroApi(403, "Origem não permitida.");

@@ -2,6 +2,12 @@
 cd /d "%~dp0"
 echo EloSocial - interface React e servidor Next.js
 echo.
+where npm.cmd >nul 2>nul
+if errorlevel 1 (
+  echo Node.js e npm nao foram encontrados. Abra um novo terminal apos a instalacao.
+  pause
+  exit /b 1
+)
 if not exist backend\.env.local (
   echo Configure o arquivo backend\.env.local antes de continuar.
   pause
@@ -18,6 +24,12 @@ if not exist frontend\node_modules (
   call npm ci
   if errorlevel 1 exit /b 1
   popd
+)
+node rotinas\diagnostico.mjs
+if errorlevel 1 (
+  echo Preencha as configuracoes pendentes em backend\.env.local antes de iniciar.
+  pause
+  exit /b 1
 )
 pushd backend
 start "EloSocial API - mantenha aberto" cmd /k "npm run dev -- --port 3000"

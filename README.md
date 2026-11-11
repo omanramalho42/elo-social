@@ -15,6 +15,8 @@ Plataforma acadêmica para divulgar ONGs e projetos sociais de Fortaleza. O visi
 
 É necessário ter Node.js e npm instalados, além das credenciais do projeto Supabase da equipe.
 
+No Windows, depois de instalar Node/npm ou alterar o PATH, abra um novo terminal. Se o PowerShell bloquear `npm.ps1`, use `npm.cmd` nos comandos abaixo.
+
 Copie `backend/.env.example` para `backend/.env.local` e preencha as variáveis:
 
 ```env
@@ -57,6 +59,8 @@ O frontend e o backend são dois projetos da Vercel conectados ao mesmo reposit�
 - **Backend:** diretório raiz `backend`, Next.js. Configure as variáveis de `backend/.env.example` no projeto da Vercel. Para os endereços atuais, `SITE_URL=https://elo-social-6qwo.vercel.app` e `FRONTEND_URL=https://elo-social-chi.vercel.app`.
 
 O frontend usa `/api` no mesmo domínio; ele não precisa de uma variável `SITE_URL`. O endereço do backend está no encaminhamento do `vercel.json`. O arquivo `backend/.env.local` serve apenas ao desenvolvimento local e não é enviado ao Git.
+
+Se `SITE_URL` ou `FRONTEND_URL` não estiverem definidas, o backend usa os endereços oficiais acima em produção e os endereços locais em desenvolvimento. Esses mesmos valores controlam a lista de origens permitidas e os links de confirmação/recuperação. Uma variável explicitamente configurada tem prioridade. Alterações neste código só afetam o site hospedado após um novo deploy do backend.
 
 ## Banco de dados
 
@@ -146,6 +150,17 @@ Para cadastrar pessoas fora da equipe do projeto e repetir os testes de e-mail, 
 O explorador do VS Code oculta dependências, compilações e arquivos gerados por meio de `.vscode/settings.json`. O Next.js exige as pastas `app/api` e arquivos `route.ts` para as rotas do servidor.
 
 ## Verificações
+
+Para retomar o trabalho e consultar as pendências conhecidas, veja [docs/RETOMADA.md](docs/RETOMADA.md).
+
+Com as dependências dos dois projetos instaladas, execute na raiz:
+
+```sh
+npm run diagnostico
+npm run verificar
+```
+
+O diagnóstico verifica os pré-requisitos sem exibir credenciais. A verificação executa os testes, as compilações e a checagem de tipos; os fluxos reais com Supabase são ensaiados separadamente.
 
 Dentro de `backend/`:
 

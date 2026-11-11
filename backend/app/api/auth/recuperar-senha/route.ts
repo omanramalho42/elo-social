@@ -1,11 +1,12 @@
 import { ErroApi, lerJson, ok, rota } from "@/biblioteca/http";
 import { supabaseDoUsuario } from "@/biblioteca/supabase/servidor";
 import { recuperarSenhaSchema } from "@/biblioteca/validacoes";
+import { enderecosAplicacao } from "@/biblioteca/enderecos";
 
 // "Esqueci minha senha": envia o e-mail de recuperação. A resposta é sempre a mesma (não revela se o e-mail existe).
 export const POST = rota(async (requisicao) => {
   const { email } = recuperarSenhaSchema.parse(await lerJson(requisicao));
-  const enderecoFrontend = process.env.FRONTEND_URL || process.env.SITE_URL;
+  const enderecoFrontend = enderecosAplicacao().frontend;
   const { error: erro } = await supabaseDoUsuario().auth.resetPasswordForEmail(
     email,
     {

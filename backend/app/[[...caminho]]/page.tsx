@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { enderecosAplicacao } from "@/biblioteca/enderecos";
 
 type ParametrosBusca = Record<string, string | string[] | undefined>;
 
@@ -12,8 +13,7 @@ export default function RedirecionarParaInterface({
 }) {
   const caminho = parametros.caminho ?? [];
   if (caminho[0] === "api") notFound();
-  const origem = process.env.FRONTEND_URL || process.env.SITE_URL;
-  if (!origem) notFound();
+  const origem = enderecosAplicacao().frontend;
 
   const destino = new URL(origem);
   const confirmacaoNaRaiz =

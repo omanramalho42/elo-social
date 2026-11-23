@@ -163,7 +163,7 @@ function CartaoRevisao({ ong, atualizar }) {
           {ong.status === "pendente" && (
             <div>
               <h3>Decidir cadastro</h3>
-              <LocalizacaoRevisao lat={lat} lon={lon} alterar={(a, b) => { definirLatitude(a); definirLongitude(b); }} endereco={ong.endereco} ocupado={ocupado} />
+              <LocalizacaoRevisao ongId={ong.id} lat={lat} lon={lon} alterar={(a, b) => { definirLatitude(a); definirLongitude(b); }} endereco={ong.endereco} ocupado={ocupado} />
               <label className="campo">
                 2. Verificação institucional
                 <select

@@ -9,11 +9,23 @@ import { Entrar, CriarConta, RecuperarSenha } from "./paginas/Autenticacao";
 import PainelGestor from "./paginas/PainelGestor";
 import ConfirmarEmail from "./paginas/ConfirmarEmail";
 import Administracao from "./paginas/Administracao";
+import Saude from "./paginas/Saude";
+import { deveAbrirSaude } from "./utilitarios/atalhos";
 
 // Esta estrutura reúne o cabeçalho, o rodapé e as rotas da interface.
 export default function Aplicacao() {
   const localizacao = useLocation();
   const navegar = useNavigate();
+  const paginaSaude = localizacao.pathname === "/health";
+  useEffect(() => {
+    function abrirSaude(evento) {
+      if (!deveAbrirSaude(evento)) return;
+      evento.preventDefault();
+      navegar("/health");
+    }
+    window.addEventListener("keydown", abrirSaude);
+    return () => window.removeEventListener("keydown", abrirSaude);
+  }, [navegar]);
   const [papelDaConta, definirPapelDaConta] = useState(null);
   const mostrarCadastro =
     papelDaConta !== "admin" && localizacao.pathname !== "/admin";
@@ -54,7 +66,7 @@ export default function Aplicacao() {
       <a className="atalho-conteudo" href="#conteudo">
         Ir para o conteúdo
       </a>
-      <header className="cabecalho">
+      {!paginaSaude && <header className="cabecalho">
         <div className="conteudo-cabecalho">
           <Marca />
           <nav aria-label="Navegação principal">
@@ -82,9 +94,10 @@ export default function Aplicacao() {
             <span>↗</span>
           </Link>
         </div>
-      </header>
+      </header>}
       <main id="conteudo">
         <Routes>
+          <Route path="/health" element={<Saude />} />
           <Route path="/" element={<Descobrir mapa />} />
           <Route path="/catalogo" element={<Descobrir />} />
           <Route path="/ongs/:id" element={<Perfil />} />
@@ -113,7 +126,7 @@ export default function Aplicacao() {
           />
         </Routes>
       </main>
-      <footer>
+      {!paginaSaude && <footer>
         <div className="conteudo-rodape">
           <Marca />
           <p>Catálogo de ONGs e projetos sociais de Fortaleza.</p>
@@ -125,7 +138,7 @@ export default function Aplicacao() {
           <span>© {new Date().getFullYear()} EloSocial</span>
           <span>Projeto acadêmico · UNIFOR</span>
         </div>
-      </footer>
+      </footer>}
     </>
   );
 }

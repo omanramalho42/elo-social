@@ -36,7 +36,7 @@ function CartaoOng({ ong }) {
         <small className="rotulo-exemplo">Dados de exemplo</small>
       )}
       {ong.verificacao === "nao_verificado" && (
-        <small className="rotulo-exemplo">Verificação pendente</small>
+        <small className="rotulo-exemplo">Vínculo institucional não confirmado</small>
       )}
       <div className="rodape-cartao">
         <span>{ong.totalProjetos || 0} projeto(s)</span>
@@ -72,7 +72,7 @@ function MarcadorOng({ ong, selecionado, aoSelecionar }) {
           <small className="rotulo-exemplo">Dados de exemplo</small>
         )}
         {ong.verificacao === "nao_verificado" && (
-          <small className="rotulo-exemplo">Verificação pendente</small>
+          <small className="rotulo-exemplo">Vínculo institucional não confirmado</small>
         )}
         <p>{ong.bairro} · Fortaleza</p>
         <Link to={`/ongs/${ong.id}`}>Conhecer ONG e projetos ↗</Link>
@@ -247,7 +247,7 @@ export function Descobrir({ mapa = false }) {
                         <small>Dados de exemplo</small>
                       )}
                       {o.verificacao === "nao_verificado" && (
-                        <small>Verificação pendente · posição aproximada</small>
+                        <small>Vínculo institucional não confirmado</small>
                       )}
                       <div className="acoes-cartao-mapa">
                         {mapeadas.some((item) => item.id === o.id) && (
@@ -390,9 +390,9 @@ export function Perfil() {
           )}
           {ong.verificacao === "nao_verificado" && (
             <p className="legenda-exemplo">
-              Verificação institucional pendente. O marcador indica uma
-              localização aproximada; confirme o endereço e as informações
-              diretamente com a iniciativa.
+              ONG aprovada e publicada no catálogo. O vínculo com a instituição
+              ainda não foi confirmado pela equipe. Confirme endereço e
+              informações diretamente com a iniciativa antes de uma visita.
             </p>
           )}
         </div>

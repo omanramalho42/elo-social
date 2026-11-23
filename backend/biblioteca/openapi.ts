@@ -85,6 +85,31 @@ export const openapi = {
   ],
 
   paths: {
+    "/api/admin/ongs/{id}/localizacao": {
+      get: {
+        tags: ["Administração"],
+        summary: "Buscar coordenadas pelo endereço cadastrado da ONG",
+        description: "Restrita ao administrador. Busca em Photon/OpenStreetMap, com cache e fila. Não altera a ONG nem aprova o cadastro. Resultados podem indicar apenas a via, sem precisão do número.",
+        security: sessao,
+        parameters: [idPath()],
+        responses: {
+          "200": { description: "Coordenadas encontradas ou endereço não localizado" },
+          "401": erro("Sessão necessária"), "403": erro("Somente administrador"),
+          "404": erro("ONG não encontrada"), "503": erro("Geocodificação temporariamente indisponível"),
+        },
+      },
+    },
+    "/api/saude/detalhes": {
+      get: {
+        tags: ["Diagnóstico"],
+        summary: "Diagnóstico público, publicação e inventário de rotas",
+        description: "Somente leitura. Consulta banco e saúde do Auth sem emitir e-mails ou testar operações de escrita. Metadados públicos, sem credenciais ou registros de usuários.",
+        responses: {
+          "200": { description: "API, leitura pública do banco e saúde do Auth disponíveis" },
+          "503": { description: "Relatório parcial: uma dependência não respondeu ou não está configurada" },
+        },
+      },
+    },
     "/api/saude": {
       get: {
         summary: "Verificar disponibilidade do servidor e leitura do banco",

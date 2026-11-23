@@ -23,7 +23,7 @@ test("toda rota /api (exceto /api/openapi) e todo método estão documentados no
     ];
     assert.ok(doc, `rota sem documentação: ${caminho}`);
     for (const m of ["GET", "POST", "PATCH", "DELETE"]) {
-      if (new RegExp(`export const ${m} =`).test(codigo)) {
+      if (new RegExp(`export (?:const ${m} =|async function ${m}\\()`).test(codigo)) {
         assert.ok(doc[m.toLowerCase()], `${m} ${caminho} não está no Swagger`);
       }
     }

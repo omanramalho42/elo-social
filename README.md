@@ -118,10 +118,18 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 - Cadastro de acesso, entrada na conta, recuperação de senha e saída.
 - Painel do gestor para editar a instituição e criar, editar ou remover projetos.
 - Painel administrativo para aprovar ou rejeitar ONGs e vincular gestores em cadastros antigos.
+- Busca automática de coordenadas pelo endereço no painel administrativo, com conferência e ajuste no mapa.
+- Painel técnico em `/health`, acessível por **Shift + S** fora dos campos de digitação: disponibilidade, deploys, arquitetura, catálogo de funções, rotas, integrações e estrutura do banco.
 
 A solicitação de inclusão exige uma conta confirmada e aberta. A ONG é vinculada automaticamente ao gestor e aparece no painel como **Em verificação**. A equipe decide no painel `/admin` se publica ou rejeita a ONG.
 
 Publicar uma associação com dados obtidos em fontes públicas não confirma vínculo institucional: o painel mantém a opção **Dados públicos conferidos; vínculo não confirmado** por padrão. Só escolha a opção de vínculo confirmado depois de comprová-lo com a instituição.
+
+No catálogo público, **Vínculo institucional não confirmado** não significa cadastro pendente: a ONG está aprovada para publicação, mas a equipe ainda não confirmou representação ou parceria com a instituição.
+
+A busca de localização usa Photon/OpenStreetMap somente na revisão administrativa. Pode retornar uma posição aproximada da via, sem confirmar o número. O sistema informa a precisão e preserva ajustes manuais. Sem resultado seguro, não inventa coordenadas. O serviço externo tem disponibilidade variável; a seleção no mapa continua disponível. `GEOCODIFICACAO_URL` é opcional e permite configurar outra instância compatível com Photon. A busca não modifica o banco; as coordenadas são salvas na aprovação validada pela API. Consulte [docs/REVISAO-ADMINISTRATIVA.md](docs/REVISAO-ADMINISTRATIVA.md).
+
+O diagnóstico detalhado usa `GET /api/saude/detalhes`, sem autenticação, com metadados públicos e consultas de leitura. Não executa aprovação, cadastro, login ou envio de e-mail, e não atesta todos os fluxos da aplicação. O contrato de `/api/saude` permanece inalterado. Detalhes em [docs/PAINEL-TECNICO.md](docs/PAINEL-TECNICO.md).
 
 ## Regras dos cadastros
 

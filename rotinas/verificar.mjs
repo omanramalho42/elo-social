@@ -12,6 +12,7 @@ if (!npmCli) {
 const etapas = [
   ["backend", "test"],
   ["frontend", "test"],
+  [".", "test:carga"],
   ["backend", "build"],
   ["backend", "typecheck"],
   ["frontend", "build"],

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Marca } from "../componentes/Comum";
 import { funcionalidades, gruposFuncionais, integrarTexto, integracoes, tabelas } from "../dados/sistema";
 import "./Saude.css";
 import BotaoTema from "../componentes/BotaoTema";
+import Desempenho from "./Desempenho";
 
 const build = __ELOSOCIAL_BUILD__;
 const secoes = [["visao-geral", "Disponibilidade"], ["publicacoes", "Deploys"], ["arquitetura", "Arquitetura"], ["funcoes", "Funcionalidades"], ["rotas", "Rotas da API"], ["integracoes", "Integrações"], ["banco", "Banco e segurança"]];
@@ -25,6 +26,8 @@ function Versao({ commit, ramo }) {
 }
 
 export default function Saude() {
+  const [parametros] = useSearchParams();
+  const aba = parametros.get("aba") === "desempenho" ? "desempenho" : "geral";
   const [tentativa, definirTentativa] = useState(0);
   const [dados, definirDados] = useState(null);
   const [carregando, definirCarregando] = useState(true);
@@ -34,6 +37,7 @@ export default function Saude() {
   const [buscaRotas, definirBuscaRotas] = useState("");
   const [metodo, definirMetodo] = useState("");
   useEffect(() => {
+    if (aba === "desempenho") return;
     const controlador = new AbortController();
     let ativo = true;
     const limite = setTimeout(() => controlador.abort(), 65000);
@@ -56,14 +60,16 @@ export default function Saude() {
     }
     consultar();
     return () => { ativo = false; clearTimeout(limite); controlador.abort(); };
-  }, [tentativa]);
+  }, [tentativa, aba]);
+  useEffect(() => { window.scrollTo(0, 0); }, [aba]);
   const listaFuncoes = funcionalidades.filter((f) => (!grupo || f.grupo === grupo) && integrarTexto([f.nome, f.descricao, f.tela, ...f.rotas].join(" ")).includes(integrarTexto(buscaFuncoes)));
   const inventario = dados?.rotas || rotasLocais;
   const listaRotas = inventario.filter((r) => (!metodo || r.metodo === metodo) && integrarTexto(`${r.metodo} ${r.caminho} ${r.resumo} ${r.acesso}`).includes(integrarTexto(buscaRotas)));
   const resumo = carregando ? "Consultando os serviços…" : erro ? "Diagnóstico indisponível" : dados?.situacao === "ok" ? "Serviços responderam à consulta" : "Uma dependência precisa de atenção";
   return <div className="pagina-saude">
     <header className="saude-cabecalho"><Marca /><div><span className="saude-atalho"><kbd>Shift</kbd> + <kbd>S</kbd></span><BotaoTema /><Link className="botao" to="/">Voltar ao site</Link></div></header>
-    <div className="saude-layout">
+    <nav className="saude-abas" aria-label="Áreas do painel técnico"><Link to="/health" aria-current={aba === "geral" ? "page" : undefined}>Visão geral</Link><Link to="/health?aba=desempenho" aria-current={aba === "desempenho" ? "page" : undefined}>Desempenho</Link></nav>
+    {aba === "desempenho" ? <Desempenho /> : <div className="saude-layout">
       <aside className="saude-indice"><p>Informações do sistema</p><nav aria-label="Seções do diagnóstico">{secoes.map(([id, nome]) => <a href={`#${id}`} key={id}>{nome}</a>)}</nav><p className="saude-nota">Documentação do código<br />e consulta em tempo real.</p></aside>
       <div className="saude-corpo">
         <section id="visao-geral" className="saude-abertura" aria-labelledby="titulo-saude">
@@ -132,6 +138,6 @@ export default function Saude() {
         </section>
         <footer className="saude-rodape"><span>EloSocial · documentação operacional</span><Link to="/">Voltar ao mapa</Link></footer>
       </div>
-    </div>
+    </div>}
   </div>;
 }

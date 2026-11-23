@@ -48,6 +48,7 @@ const grupos = {
     ["Atalho Shift + S", "Abre este painel fora de campos de digitação; não envia requisições de escrita.", "/health", []],
     ["Página não encontrada", "Rotas desconhecidas exibem orientação para voltar ao mapa.", "/*", []],
     ["Modo escuro", "Alternância no cabeçalho, com preferência salva no navegador e aplicada às telas, formulários e mapa.", "/", []],
+    ["Desempenho e mapa de calor", "Resultados de carga local isolada por rota e concorrência; projeção explícita de demanda para 50 milhões ou mais, sem atestar capacidade de produção.", "/health?aba=desempenho", []],
   ],
 };
 

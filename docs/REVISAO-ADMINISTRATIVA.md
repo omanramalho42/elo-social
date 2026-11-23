@@ -16,4 +16,6 @@ O resultado deve corresponder à via informada, à cidade de Fortaleza e aos lim
 
 O texto público “Verificação pendente” foi trocado por “Vínculo institucional não confirmado”. A situação de publicação (`status`) e a confirmação do vínculo (`verificacao`) são atributos diferentes; nenhum status de cadastro foi modificado por essa mudança de texto.
 
+O motivo da recusa exige de 5 a 500 caracteres após remover os espaços nas pontas, conforme a validação da API. A tela mostra essa exigência e um contador abaixo do campo. No ensaio de interface, “fw” permaneceu bloqueado com indicação de 2/500; “Dados incompletos” liberou “Não aprovar”. Nenhum cadastro foi rejeitado nesse teste e a regra do servidor permaneceu inalterada.
+
 Ensaio de leitura com a ONG existente de ID 41: a API encontrou Rua Entrada da Lua, Pici, Fortaleza; o componente preencheu latitude e longitude e informou precisão de via, sem comprovação do número 170. A ONG não foi alterada nesse teste. Não foi feita aprovação automática ou migração de banco.

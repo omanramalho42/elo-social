@@ -2,7 +2,7 @@
 
 Acesse `/health` na interface ou pressione **Shift + S** fora de campos de digitação. O atalho não intercepta edição de texto, composição de caracteres ou combinações com Ctrl, Alt e Meta. Há navegação por seções e filtros por função, área da aplicação, operação e método HTTP.
 
-O painel reúne 40 funcionalidades numeradas em cinco grupos e as 27 operações HTTP documentadas, incluindo a consulta de localização. Identifica recursos que existem somente na API. A numeração é um identificador, não uma pontuação de qualidade nem uma comprovação de teste funcional. O inventário online deriva do OpenAPI do backend. Quando a consulta falha, o catálogo local permanece acessível e é identificado como referência do código.
+O painel reúne 41 funcionalidades numeradas em cinco grupos e as 27 operações HTTP documentadas, incluindo a consulta de localização. Identifica recursos que existem somente na API. A numeração é um identificador, não uma pontuação de qualidade nem uma comprovação de teste funcional. O inventário online deriva do OpenAPI do backend. Quando a consulta falha, o catálogo local permanece acessível e é identificado como referência do código.
 
 ## Consulta de disponibilidade
 
@@ -11,6 +11,8 @@ O painel reúne 40 funcionalidades numeradas em cinco grupos e as 27 operações
 A interface aguarda até 65 segundos para permitir a inicialização do Render gratuito, cancela consultas ao sair e oferece atualização manual. Não há polling periódico. A data de compilação do frontend não é apresentada como data do deploy do backend. Metadados não fornecidos pelo ambiente são identificados como ausentes.
 
 ## Escopo
+
+A aba **Desempenho**, em `/health?aba=desempenho`, apresenta o relatório estático do último ensaio local isolado, mapa de calor de P95/erros por concorrência e rota, detalhes das células e projeção de chamadas por segundo para 50 milhões de usuários ou outro volume informado. A projeção não é um teste executado. O botão de atualização apenas relê o JSON; não inicia carga. A rotina `npm run testar:carga` não aceita alvos externos e usa Supabase/PostgREST simulado em loopback, sem credenciais reais. Consulte `docs/TESTE-DE-CARGA.md` para condições e resultados.
 
 Inclui deploys, fluxo navegador → Vercel → Render → Supabase, tecnologias, tabela de operações com acesso, integrações e estrutura das tabelas. Supabase Auth responde exclusivamente pelos e-mails de confirmação e recuperação; não há serviço de e-mail próprio no backend. Photon faz busca de endereço na administração; OpenStreetMap fornece tiles; Google Fonts e jsDelivr são recursos de interface/documentação. Nominatim permanece apenas como referência histórica da preparação dos dados, sem chamadas de execução.
 

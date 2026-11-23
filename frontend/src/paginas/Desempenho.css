@@ -1,0 +1,59 @@
+.saude-abas { max-width: 1368px; margin: 0 auto; padding: 0 36px; display: flex; gap: 26px; border-bottom: 1px solid var(--line); }
+.saude-abas a { padding: 16px 0 13px; font-size: 14px; color: var(--texto-suave, #596354); border-bottom: 3px solid transparent; }
+.saude-abas a[aria-current="page"] { color: var(--texto, #1c251f); border-bottom-color: var(--texto-destaque, #516642); font-weight: 700; }
+.carga-corpo { max-width: 1160px; margin: auto; padding: 38px 36px 50px; }
+.carga-titulo h1 { font-size: clamp(30px, 3vw, 40px); line-height: 1.2; letter-spacing: -.03em; max-width: 22ch; margin-bottom: 14px; }
+.carga-contexto { margin-top: 28px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 7px; background: var(--superficie-suave, #edf0e8); }
+.carga-contexto strong { font-size: 14px; }
+.carga-contexto p { font-size: 13px; color: var(--texto-suave, #596354); margin: 6px 0 0; max-width: 90ch; }
+.carga-identificacao { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 18px 0; font-size: 12px; color: var(--texto-suave, #596354); }
+.carga-identificacao a { text-decoration: underline; }
+.carga-medidas { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 28px; margin: 24px 0 22px; }
+.carga-medidas > div { border-top: 1px solid var(--line); padding-top: 16px; }
+.carga-medidas dt { font-size: 12px; color: var(--texto-suave, #596354); }
+.carga-medidas dd { margin: 8px 0 0; font-size: 29px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.carga-medidas dd span { display: block; font-size: 12px; font-weight: 400; letter-spacing: 0; color: var(--texto-suave, #596354); }
+.carga-conclusao { font-size: 13px; color: var(--texto-suave, #596354); padding: 18px 0; border-block: 1px solid var(--line); }
+.carga-secao { margin-top: 42px; padding-top: 3px; }
+.carga-secao h2 { font-size: 25px; line-height: 1.3; letter-spacing: -.025em; margin-bottom: 12px; }
+.carga-cabecalho-secao { display: flex; justify-content: space-between; align-items: start; gap: 24px; }
+.carga-cabecalho-secao p { font-size: 13px; color: var(--texto-suave, #596354); margin-bottom: 18px; }
+.carga-cabecalho-secao label { min-width: 160px; font-size: 12px; }
+.carga-cabecalho-secao select { padding: 9px 12px; font-size: 13px; }
+.carga-legenda { display: flex; flex-wrap: wrap; gap: 18px; font-size: 11px; margin: 4px 0 16px; }
+.carga-legenda span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: currentColor; margin-right: 7px; }
+.carga-legenda .boa { color: var(--sucesso-texto, #34543b); }.carga-legenda .atencao { color: var(--aviso-texto, #7b5e22); }.carga-legenda .critica { color: var(--erro-texto, #a13f2c); }
+.carga-mapa { overflow: auto; scrollbar-color: #7c9070 transparent; }
+.carga-mapa table { width: 100%; min-width: 650px; border-spacing: 6px; text-align: left; }
+.carga-mapa caption { font-size: 11px; text-align: left; color: var(--texto-suave, #596354); padding: 4px 6px 10px; }
+.carga-mapa th { font-size: 12px; font-weight: 600; padding: 8px 10px; vertical-align: bottom; }
+.carga-mapa th:first-child { width: 125px; }
+.carga-mapa th code { font-size: 11px; overflow-wrap: anywhere; }
+.carga-mapa td { width: 28%; padding: 0; }
+.carga-celula { display: flex; align-items: start; flex-direction: column; gap: 5px; width: 100%; border-radius: 5px; padding: 14px 16px; min-height: 76px; border: 1px solid transparent; color: var(--texto, #1c251f); background: var(--superficie-suave, #edf0e8); }
+.carga-celula strong { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.carga-celula small { font-size: 11px; }
+.carga-celula.boa { background: var(--sucesso-fundo, #deead8); color: var(--sucesso-texto, #294b30); }
+.carga-celula.atencao { background: #f1e3c3; color: #684c17; }
+.carga-celula.critica { background: var(--erro-fundo, #f6d8d0); color: var(--erro-texto, #8f3023); }
+:root[data-tema="escuro"] .carga-celula.atencao { background: #443a23; color: #efd59e; }
+.carga-celula[aria-pressed="true"] { outline: 2px solid var(--texto-destaque, #516642); outline-offset: 1px; }
+.carga-celula:hover { border-color: currentColor; }
+.carga-detalhe { border-block: 1px solid var(--line); margin-top: 22px; padding: 18px 0; }
+.carga-detalhe > p { font-size: 13px; color: var(--texto-suave, #596354); margin: 0; }
+.carga-detalhe h3 { font-size: 15px; margin: 0 0 16px; overflow-wrap: anywhere; }
+.carga-detalhe dl { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 14px; margin: 0; }
+.carga-detalhe dt { font-size: 11px; color: var(--texto-suave, #596354); }.carga-detalhe dd { font-size: 13px; margin: 5px 0 0; font-variant-numeric: tabular-nums; }
+.carga-entradas { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 18px; }
+.carga-entradas label { font-size: 12px; font-weight: 600; }
+.carga-projecao { margin-top: 22px; padding: 22px; background: var(--superficie-destaque, #e9eddf); border-radius: 7px; }
+.carga-projecao > span { display: block; font-size: 12px; color: var(--texto-destaque, #516642); }
+.carga-projecao > strong { display: block; font-size: clamp(25px,3vw,34px); line-height: 1.3; margin-top: 12px; letter-spacing: -.025em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.carga-projecao > strong small { font-size: 14px; font-weight: 400; letter-spacing: 0; }
+.carga-projecao p { font-size: 13px; color: var(--texto-destaque, #516642); max-width: 85ch; margin: 12px 0 0; }
+@media (max-width: 760px) {
+  .saude-abas { padding: 0 18px; gap: 23px; }.carga-corpo { padding: 28px 18px 36px; }.carga-titulo h1 { font-size: 30px; }
+  .carga-medidas { grid-template-columns: 1fr; gap: 16px; }.carga-medidas > div { display: flex; justify-content: space-between; gap: 16px; align-items: center; }.carga-medidas dt { max-width: 23ch; }.carga-medidas dd { font-size: 25px; text-align: right; margin: 0; }
+  .carga-cabecalho-secao { flex-direction: column; gap: 0; }.carga-cabecalho-secao label { margin-bottom: 18px; width: 100%; }.carga-cabecalho-secao select { max-width: 280px; }
+  .carga-detalhe dl { grid-template-columns: repeat(3,minmax(0,1fr)); }.carga-entradas { grid-template-columns: 1fr; gap: 14px; }.carga-projecao { padding: 18px; }.carga-projecao > strong small { display: block; margin-top: 6px; }
+}

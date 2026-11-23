@@ -7,6 +7,8 @@
     "dev:interface": "npm --prefix frontend run dev",
     "diagnostico": "node rotinas/diagnostico.mjs",
     "verificar": "node rotinas/verificar.mjs",
+    "test:carga": "node --test rotinas/testes/*.teste.mjs",
+    "testar:carga": "node rotinas/testar-carga.mjs",
     "test": "npm --prefix backend test && npm --prefix frontend test"
   }
 }

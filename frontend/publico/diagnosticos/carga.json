@@ -1,0 +1,327 @@
+{
+  "schema": 1,
+  "tipo": "local-isolado",
+  "geradoEm": "2026-11-23T20:41:18.248Z",
+  "commitBase": "aba8c9c9edac4e9c674d8ad8797113e2b841b75a",
+  "ambiente": {
+    "node": "v22.23.5",
+    "next": "16.4.6",
+    "processadoresLogicos": 16,
+    "memoriaTotalGiB": 16,
+    "geradorNoMesmoComputador": true,
+    "banco": "Simulador local de PostgREST/Supabase",
+    "atrasoBancoMs": 25,
+    "registrosSinteticos": 100
+  },
+  "metodologia": {
+    "modelo": "Clientes HTTP em laço fechado, uma chamada em voo por cliente, rotas alternadas sem pausa entre ações.",
+    "janelaPorEtapaMs": 6000,
+    "timeoutMs": 3000,
+    "limiteChamadas": 200000,
+    "limiteClientes": 1000,
+    "somenteLeitura": true,
+    "producaoMedida": false,
+    "duracaoTotalMs": 36394,
+    "consultasAoSimulador": 4768
+  },
+  "limitacoes": [
+    "Não mede Vercel, Render, PostgreSQL, RLS, rede pública, TLS, sessão autenticada ou envio de e-mail reais.",
+    "Gerador, API e simulador compartilham CPU e memória; a máquina geradora pode ser o gargalo.",
+    "São clientes HTTP, não navegadores completos nem usuários humanos simultâneos.",
+    "O maior nível ensaiado não comprova o limite de capacidade nem suporte a 50 milhões de usuários.",
+    "Percentis são calculados sobre todas as chamadas concluídas, incluindo falhas e timeouts; vazão inclui o tempo de drenagem."
+  ],
+  "rotas": [
+    "/api/ongs?limite=100",
+    "/api/ongs/1",
+    "/api/saude"
+  ],
+  "etapas": [
+    {
+      "concorrencia": 1,
+      "duracaoMs": 6004,
+      "resumo": {
+        "total": 137,
+        "sucessos": 137,
+        "erros": 0,
+        "taxaErro": 0,
+        "requisicoesPorSegundo": 22.82,
+        "sucessosPorSegundo": 22.82,
+        "p50Ms": 45.22,
+        "p95Ms": 50.97,
+        "p99Ms": 54.61
+      },
+      "rotas": [
+        {
+          "rota": "/api/ongs?limite=100",
+          "total": 46,
+          "sucessos": 46,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 7.66,
+          "sucessosPorSegundo": 7.66,
+          "p50Ms": 48.87,
+          "p95Ms": 53.48,
+          "p99Ms": 55.51
+        },
+        {
+          "rota": "/api/ongs/1",
+          "total": 46,
+          "sucessos": 46,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 7.66,
+          "sucessosPorSegundo": 7.66,
+          "p50Ms": 43.76,
+          "p95Ms": 47.4,
+          "p99Ms": 48.24
+        },
+        {
+          "rota": "/api/saude",
+          "total": 45,
+          "sucessos": 45,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 7.5,
+          "sucessosPorSegundo": 7.5,
+          "p50Ms": 45.22,
+          "p95Ms": 47.43,
+          "p99Ms": 48.49
+        }
+      ],
+      "causas": {
+        "http": 0,
+        "conexaoOuTimeout": 0
+      }
+    },
+    {
+      "concorrencia": 10,
+      "duracaoMs": 6036,
+      "resumo": {
+        "total": 1151,
+        "sucessos": 1151,
+        "erros": 0,
+        "taxaErro": 0,
+        "requisicoesPorSegundo": 190.7,
+        "sucessosPorSegundo": 190.7,
+        "p50Ms": 51.86,
+        "p95Ms": 67.8,
+        "p99Ms": 72.45
+      },
+      "rotas": [
+        {
+          "rota": "/api/ongs?limite=100",
+          "total": 384,
+          "sucessos": 384,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 63.62,
+          "sucessosPorSegundo": 63.62,
+          "p50Ms": 54.4,
+          "p95Ms": 69.14,
+          "p99Ms": 76.22
+        },
+        {
+          "rota": "/api/ongs/1",
+          "total": 383,
+          "sucessos": 383,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 63.46,
+          "sucessosPorSegundo": 63.46,
+          "p50Ms": 50.68,
+          "p95Ms": 66.93,
+          "p99Ms": 71.78
+        },
+        {
+          "rota": "/api/saude",
+          "total": 384,
+          "sucessos": 384,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 63.62,
+          "sucessosPorSegundo": 63.62,
+          "p50Ms": 50.99,
+          "p95Ms": 67.55,
+          "p99Ms": 71.51
+        }
+      ],
+      "causas": {
+        "http": 0,
+        "conexaoOuTimeout": 0
+      }
+    },
+    {
+      "concorrencia": 50,
+      "duracaoMs": 6074,
+      "resumo": {
+        "total": 2199,
+        "sucessos": 2199,
+        "erros": 0,
+        "taxaErro": 0,
+        "requisicoesPorSegundo": 362.03,
+        "sucessosPorSegundo": 362.03,
+        "p50Ms": 132.47,
+        "p95Ms": 186.2,
+        "p99Ms": 294.13
+      },
+      "rotas": [
+        {
+          "rota": "/api/ongs?limite=100",
+          "total": 733,
+          "sucessos": 733,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 120.68,
+          "sucessosPorSegundo": 120.68,
+          "p50Ms": 134.45,
+          "p95Ms": 190.8,
+          "p99Ms": 294.13
+        },
+        {
+          "rota": "/api/ongs/1",
+          "total": 733,
+          "sucessos": 733,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 120.68,
+          "sucessosPorSegundo": 120.68,
+          "p50Ms": 131.48,
+          "p95Ms": 186.19,
+          "p99Ms": 294.27
+        },
+        {
+          "rota": "/api/saude",
+          "total": 733,
+          "sucessos": 733,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 120.68,
+          "sucessosPorSegundo": 120.68,
+          "p50Ms": 131.92,
+          "p95Ms": 183.35,
+          "p99Ms": 291.05
+        }
+      ],
+      "causas": {
+        "http": 0,
+        "conexaoOuTimeout": 0
+      }
+    },
+    {
+      "concorrencia": 100,
+      "duracaoMs": 6756,
+      "resumo": {
+        "total": 677,
+        "sucessos": 677,
+        "erros": 0,
+        "taxaErro": 0,
+        "requisicoesPorSegundo": 100.2,
+        "sucessosPorSegundo": 100.2,
+        "p50Ms": 1178.36,
+        "p95Ms": 1468.91,
+        "p99Ms": 1515.51
+      },
+      "rotas": [
+        {
+          "rota": "/api/ongs?limite=100",
+          "total": 225,
+          "sucessos": 225,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 33.3,
+          "sucessosPorSegundo": 33.3,
+          "p50Ms": 1162.93,
+          "p95Ms": 1489.37,
+          "p99Ms": 1539.69
+        },
+        {
+          "rota": "/api/ongs/1",
+          "total": 226,
+          "sucessos": 226,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 33.45,
+          "sucessosPorSegundo": 33.45,
+          "p50Ms": 1196.88,
+          "p95Ms": 1422.56,
+          "p99Ms": 1468.99
+        },
+        {
+          "rota": "/api/saude",
+          "total": 226,
+          "sucessos": 226,
+          "erros": 0,
+          "taxaErro": 0,
+          "requisicoesPorSegundo": 33.45,
+          "sucessosPorSegundo": 33.45,
+          "p50Ms": 1149.43,
+          "p95Ms": 1440.86,
+          "p99Ms": 1468.91
+        }
+      ],
+      "causas": {
+        "http": 0,
+        "conexaoOuTimeout": 0
+      }
+    },
+    {
+      "concorrencia": 250,
+      "duracaoMs": 7777,
+      "resumo": {
+        "total": 585,
+        "sucessos": 377,
+        "erros": 208,
+        "taxaErro": 0.35555555555555557,
+        "requisicoesPorSegundo": 75.22,
+        "sucessosPorSegundo": 48.48,
+        "p50Ms": 3021.39,
+        "p95Ms": 4078.05,
+        "p99Ms": 4185.8
+      },
+      "rotas": [
+        {
+          "rota": "/api/ongs?limite=100",
+          "total": 195,
+          "sucessos": 123,
+          "erros": 72,
+          "taxaErro": 0.36923076923076925,
+          "requisicoesPorSegundo": 25.07,
+          "sucessosPorSegundo": 15.82,
+          "p50Ms": 3007.78,
+          "p95Ms": 4166.4,
+          "p99Ms": 4211.31
+        },
+        {
+          "rota": "/api/ongs/1",
+          "total": 195,
+          "sucessos": 125,
+          "erros": 70,
+          "taxaErro": 0.358974358974359,
+          "requisicoesPorSegundo": 25.07,
+          "sucessosPorSegundo": 16.07,
+          "p50Ms": 3038.95,
+          "p95Ms": 4071.76,
+          "p99Ms": 4115.3
+        },
+        {
+          "rota": "/api/saude",
+          "total": 195,
+          "sucessos": 129,
+          "erros": 66,
+          "taxaErro": 0.3384615384615385,
+          "requisicoesPorSegundo": 25.07,
+          "sucessosPorSegundo": 16.59,
+          "p50Ms": 3014.53,
+          "p95Ms": 4027.18,
+          "p99Ms": 4102.74
+        }
+      ],
+      "causas": {
+        "http": 0,
+        "conexaoOuTimeout": 208
+      }
+    }
+  ],
+  "encerramento": "Ensaio encerrado após observar mais de 5% de erros ou P95 acima de 2 segundos; não atribui a causa apenas ao servidor."
+}

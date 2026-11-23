@@ -121,6 +121,7 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 - Busca automática de coordenadas pelo endereço no painel administrativo, com conferência e ajuste no mapa.
 - Painel técnico em `/health`, acessível por **Shift + S** fora dos campos de digitação: disponibilidade, deploys, arquitetura, catálogo de funções, rotas, integrações e estrutura do banco.
 - Botão de modo escuro ao lado do acesso à conta, com preferência salva no navegador e aplicada também aos formulários, mapa e painel técnico.
+- Aba **Desempenho** em `/health?aba=desempenho`, com mapa de calor de latência/erros de um ensaio local e projeção de demanda explicitamente separada das medições.
 
 A solicitação de inclusão exige uma conta confirmada e aberta. A ONG é vinculada automaticamente ao gestor e aparece no painel como **Em verificação**. A equipe decide no painel `/admin` se publica ou rejeita a ONG.
 
@@ -131,6 +132,8 @@ No catálogo público, **Vínculo institucional não confirmado** não significa
 A busca de localização usa Photon/OpenStreetMap somente na revisão administrativa. Pode retornar uma posição aproximada da via, sem confirmar o número. O sistema informa a precisão e preserva ajustes manuais. Sem resultado seguro, não inventa coordenadas. O serviço externo tem disponibilidade variável; a seleção no mapa continua disponível. `GEOCODIFICACAO_URL` é opcional e permite configurar outra instância compatível com Photon. A busca não modifica o banco; as coordenadas são salvas na aprovação validada pela API. Consulte [docs/REVISAO-ADMINISTRATIVA.md](docs/REVISAO-ADMINISTRATIVA.md).
 
 O diagnóstico detalhado usa `GET /api/saude/detalhes`, sem autenticação, com metadados públicos e consultas de leitura. Não executa aprovação, cadastro, login ou envio de e-mail, e não atesta todos os fluxos da aplicação. O contrato de `/api/saude` permanece inalterado. Detalhes em [docs/PAINEL-TECNICO.md](docs/PAINEL-TECNICO.md).
+
+O teste `npm.cmd run testar:carga`, executado após compilar o backend, inicia API e simulador de banco somente em loopback, sem credenciais reais e sem alvos externos. Salva agregados em `frontend/publico/diagnosticos/carga.json`. O ensaio não mede a capacidade de produção nem comprova milhões de usuários; condições e resultados estão em [docs/TESTE-DE-CARGA.md](docs/TESTE-DE-CARGA.md). A aba apenas consulta esse relatório, sem disparar carga no site.
 
 ## Regras dos cadastros
 

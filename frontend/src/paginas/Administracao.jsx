@@ -186,15 +186,21 @@ function CartaoRevisao({ ong, atualizar }) {
                 Aprovar e publicar
               </button>
               <label className="campo">
-                Motivo da recusa
+                Motivo da recusa *
                 <input
                   value={motivo}
                   onChange={(e) => definirMotivo(e.target.value)}
                   minLength={5}
                   maxLength={500}
+                  aria-describedby={`motivo-recusa-${ong.id}`}
                   placeholder="Explique a decisão"
                 />
               </label>
+              <p className="dica" id={`motivo-recusa-${ong.id}`} role="status">
+                {motivo.trim().length < 5
+                  ? `Escreva pelo menos 5 caracteres para liberar “Não aprovar”. ${motivo.trim().length}/500 preenchidos.`
+                  : `${motivo.trim().length}/500 caracteres. O motivo está pronto para enviar.`}
+              </p>
               <button
                 className="botao perigo"
                 disabled={ocupado || motivo.trim().length < 5}

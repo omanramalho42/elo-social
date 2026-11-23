@@ -16,7 +16,7 @@ export function enderecosAplicacao(ambiente: Ambiente = process.env) {
   };
   return {
     backend: origem(ambiente.SITE_URL || (producao
-      ? "https://elo-social-api-jpbraga.vercel.app"
+      ? "https://elo-social-api-jpbraga.onrender.com"
       : "http://localhost:3000")),
     frontend: origem(ambiente.FRONTEND_URL || (producao
       ? "https://elo-social-web-jpbraga.vercel.app"

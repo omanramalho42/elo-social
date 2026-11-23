@@ -3,18 +3,23 @@ import { test } from "node:test";
 import { ErroApi, exigirMesmaOrigem } from "../biblioteca/http";
 import { enderecosAplicacao } from "../biblioteca/enderecos";
 
-test("produção sem FRONTEND_URL usa o site oficial para origens e links de e-mail", () => {
+test("produção sem endereços explícitos usa Render e o frontend oficial", () => {
   const ambienteAnterior = { ...process.env };
   try {
-    Object.assign(process.env, { NODE_ENV: "production", SITE_URL: "https://elo-social-api-jpbraga.vercel.app" });
+    Object.assign(process.env, { NODE_ENV: "production" });
+    delete process.env.SITE_URL;
     delete process.env.FRONTEND_URL;
-    assert.equal(enderecosAplicacao().frontend, "https://elo-social-web-jpbraga.vercel.app");
-    const pedido = (origem?: string) => new Request("https://elo-social-api-jpbraga.vercel.app/api/auth/recuperar-senha", {
+    assert.deepEqual(enderecosAplicacao(), {
+      backend: "https://elo-social-api-jpbraga.onrender.com",
+      frontend: "https://elo-social-web-jpbraga.vercel.app",
+    });
+    const pedido = (origem?: string) => new Request("https://elo-social-api-jpbraga.onrender.com/api/auth/recuperar-senha", {
       method: "POST",
       headers: origem === undefined ? {} : { origin: origem },
     });
     assert.doesNotThrow(() => exigirMesmaOrigem(pedido("https://elo-social-web-jpbraga.vercel.app")));
-    for (const origem of [undefined, "null", "https://outro-site.example", "https://elo-social-web-jpbraga.vercel.app.evil.example", "http://127.0.0.1:5173"]) {
+    assert.doesNotThrow(() => exigirMesmaOrigem(pedido("https://elo-social-api-jpbraga.onrender.com")));
+    for (const origem of [undefined, "null", "https://elo-social-api-jpbraga.vercel.app", "https://outro-site.example", "https://elo-social-web-jpbraga.vercel.app.evil.example", "http://127.0.0.1:5173"]) {
       assert.throws(() => exigirMesmaOrigem(pedido(origem)),
         (erro) => erro instanceof ErroApi && erro.status === 403);
     }
@@ -44,17 +49,17 @@ test("endereços normalizam barra final e rejeitam protocolos não HTTP", () => 
 test("requisições aceitam as origens do frontend e do backend", () => {
   const siteAnterior = process.env.SITE_URL;
   const interfaceAnterior = process.env.FRONTEND_URL;
-  process.env.SITE_URL = "https://elo-social-api-jpbraga.vercel.app";
+  process.env.SITE_URL = "https://elo-social-api-jpbraga.onrender.com";
   process.env.FRONTEND_URL = "https://elo-social-web-jpbraga.vercel.app";
   const pedido = (origem: string) =>
-    new Request("https://elo-social-api-jpbraga.vercel.app/api/cadastro", {
+    new Request("https://elo-social-api-jpbraga.onrender.com/api/cadastro", {
       method: "POST",
       headers: { origin: origem },
     });
 
   try {
     assert.doesNotThrow(() =>
-      exigirMesmaOrigem(pedido("https://elo-social-api-jpbraga.vercel.app")),
+      exigirMesmaOrigem(pedido("https://elo-social-api-jpbraga.onrender.com")),
     );
     assert.doesNotThrow(() =>
       exigirMesmaOrigem(pedido("https://elo-social-web-jpbraga.vercel.app")),

@@ -51,32 +51,49 @@ No Windows, `INICIAR-ELOSOCIAL.cmd` também inicia os dois serviços. Não execu
 
 O Vite encaminha as chamadas `/api` para o servidor na porta 3000 apenas durante o desenvolvimento local.
 
-## Publicar na Vercel
+## Publicação do frontend e do backend
 
-O frontend e o backend são dois projetos da Vercel conectados ao mesmo repositório:
+O frontend fica na Vercel e a API está publicada no Render em `https://elo-social-api-jpbraga.onrender.com`. O banco e a autenticação permanecem no mesmo projeto Supabase. O encaminhamento `/api` dos dois arquivos `vercel.json` usa o domínio do Render; publicar novamente o frontend é necessário para aplicar uma mudança nesse encaminhamento.
 
-| Configuração na Vercel | Projeto frontend | Projeto backend |
-|---|---|---|
-| Git Repository | Este mesmo repositório | Este mesmo repositório |
-| Root Directory | `frontend` | `backend` |
-| Framework Preset | Vite | Next.js |
-| Install Command | `npm ci` | `npm ci` |
-| Build Command | `npm run build` | `npm run build` |
-| Output Directory | `dist` | Padrão do Next.js |
-| Node.js | 22.x | 22.x |
+### Backend no Render
 
-Importe o mesmo repositório duas vezes na Vercel, dando um nome diferente a cada projeto e definindo o **Root Directory** conforme a tabela. Cada pasta possui seu próprio `package.json`, lock de dependências e `vercel.json`; nenhuma precisa dos arquivos da outra para compilar. Os comandos da raiz são atalhos para desenvolvimento e verificação local.
+| Configuração | Valor |
+|---|---|
+| Tipo | Web Service, Node |
+| Repositório e branch | Este repositório, `main` |
+| Root Directory | `backend` |
+| Build Command | `npm ci --include=dev && npm run build` |
+| Start Command | `npm run start -- --hostname 0.0.0.0 --port $PORT` |
+| Health Check Path | `/api/saude` |
+| SITE_URL | `https://elo-social-api-jpbraga.onrender.com` |
+| FRONTEND_URL | `https://elo-social-web-jpbraga.vercel.app` |
 
-- **Frontend:** diretório raiz `frontend`, Vite, comando `npm run build`, saída `dist`. O arquivo `frontend/vercel.json` encaminha `/api` ao backend e mantém as rotas da interface acessíveis por endereço direto. Se o projeto usar a raiz do repositório, `vercel.json` na raiz define o comando e a saída `frontend/dist`.
-- **Backend:** diretório raiz `backend`, Next.js. Configure as variáveis de `backend/.env.example` no projeto da Vercel. Para os endereços atuais, `SITE_URL=https://elo-social-api-jpbraga.vercel.app` e `FRONTEND_URL=https://elo-social-web-jpbraga.vercel.app`.
+Configure também as três variáveis Supabase de `backend/.env.example` como variáveis privadas do serviço. Não importe as URLs locais do `.env.local` para a produção. As variáveis explícitas têm prioridade sobre os endereços de compatibilidade do código. Não é necessário recriar o banco nem executar os scripts de criação para mudar a hospedagem da API.
+
+O serviço foi configurado no plano gratuito do Render, que pode suspender a instância após inatividade. A primeira requisição pode aguardar a inicialização. A origem pública para os retornos `/confirmar-email` e `/redefinir-senha` continua sendo o frontend.
+
+### Frontend na Vercel
+
+| Configuração | Valor para importação pelo Git |
+|---|---|
+| Repositório | Este mesmo repositório |
+| Root Directory | `frontend` |
+| Framework Preset | Vite |
+| Install Command | `npm ci` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+
+Cada pasta possui seu próprio `package.json`, lock de dependências e `vercel.json`; nenhuma precisa dos arquivos da outra para compilar. Os comandos da raiz são atalhos para desenvolvimento e verificação local. Na publicação atual pela CLI, a pasta `frontend` é enviada diretamente e o diretório raiz remoto é `.`.
+
+O arquivo `frontend/vercel.json` encaminha `/api` ao backend do Render e mantém as rotas da interface acessíveis por endereço direto. Se o projeto usar a raiz do repositório, `vercel.json` na raiz define o comando e a saída `frontend/dist`.
 
 O frontend usa `/api` no mesmo domínio; ele não precisa de uma variável `SITE_URL`. O endereço do backend está no encaminhamento do `vercel.json`. O arquivo `backend/.env.local` serve apenas ao desenvolvimento local e não é enviado ao Git.
 
 Se o backend for recriado com outro domínio, atualize `destination` da regra `/api/:caminho*` em `frontend/vercel.json` com o novo endereço e publique novamente o frontend. Atualize também a cópia dessa regra em `vercel.json` na raiz, mantida para compatibilidade com a publicação antiga pela raiz do repositório. Não encaminhe o frontend diretamente ao Supabase.
 
-Configure as três chaves do Supabase somente no projeto **backend**, além de `SITE_URL` com a URL do novo backend e `FRONTEND_URL` com a URL do frontend. No Supabase Auth, autorize os retornos `/confirmar-email` e `/redefinir-senha` no domínio do frontend. Depois do deploy, confira `https://DOMINIO-DO-BACKEND/api/saude` e `https://DOMINIO-DO-FRONTEND/api/saude`; ambos devem retornar `{"situacao":"ok"}`. O segundo endereço também verifica o encaminhamento da API.
+Configure as três chaves do Supabase somente no serviço **backend do Render**, além de `SITE_URL` com a URL do novo backend e `FRONTEND_URL` com a URL do frontend. No Supabase Auth, autorize os retornos `/confirmar-email` e `/redefinir-senha` no domínio do frontend. Depois do deploy, confira `https://DOMINIO-DO-BACKEND/api/saude` e `https://DOMINIO-DO-FRONTEND/api/saude`; ambos devem retornar `{"situacao":"ok"}`. O segundo endereço também verifica o encaminhamento da API.
 
-Se `SITE_URL` ou `FRONTEND_URL` não estiverem definidas, o backend usa os endereços oficiais acima em produção e os endereços locais em desenvolvimento. Esses mesmos valores controlam a lista de origens permitidas e os links de confirmação/recuperação. Uma variável explicitamente configurada tem prioridade. Alterações neste código só afetam o site hospedado após um novo deploy do backend.
+O módulo `backend/biblioteca/enderecos.ts` usa os domínios do Render e do frontend atual quando as variáveis estão ausentes em produção. Mantenha `SITE_URL` e `FRONTEND_URL` explicitamente configuradas para identificar o ambiente de publicação. Esses valores controlam as origens permitidas e os links de confirmação/recuperação. Alterações no código só afetam o site hospedado após um novo deploy do serviço correspondente.
 
 ## Banco de dados
 

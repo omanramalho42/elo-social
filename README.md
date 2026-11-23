@@ -53,6 +53,8 @@ O Vite encaminha as chamadas `/api` para o servidor na porta 3000 apenas durante
 
 ## Publicação do frontend e do backend
 
+O estado verificado da implantação, os testes executados e as pendências de integração ficam em [docs/IMPLANTACAO.md](docs/IMPLANTACAO.md).
+
 O frontend fica na Vercel e a API está publicada no Render em `https://elo-social-api-jpbraga.onrender.com`. O banco e a autenticação permanecem no mesmo projeto Supabase. O encaminhamento `/api` dos dois arquivos `vercel.json` usa o domínio do Render; publicar novamente o frontend é necessário para aplicar uma mudança nesse encaminhamento.
 
 ### Backend no Render

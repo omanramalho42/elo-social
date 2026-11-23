@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { formatarCnpj } from "../utilitarios/formatadores";
+import LocalizacaoRevisao from "../componentes/LocalizacaoRevisao";
+import { validarLocalizacao } from "../utilitarios/localizacao";
 
 const situacoes = [
   ["pendente", "Em verificação"],
@@ -21,6 +23,7 @@ function CartaoRevisao({ ong, atualizar }) {
   const [ocupado, definirOcupado] = useState(false);
   const [erro, definirErro] = useState("");
   const [mensagem, definirMensagem] = useState("");
+  const localizacao = validarLocalizacao(lat, lon);
 
   async function executar(acao) {
     definirOcupado(true);
@@ -34,16 +37,13 @@ function CartaoRevisao({ ong, atualizar }) {
         });
         definirMensagem("Gestor vinculado.");
       } else if (acao === "aprovar") {
-        if (lat === "" || lon === "")
-          throw new Error(
-            "Informe latitude e longitude conferidas antes de aprovar.",
-          );
+        if (!localizacao.valida) throw new Error(localizacao.mensagem);
         await api(`/admin/ongs/${ong.id}`, {
           method: "PATCH",
           body: {
             acao: "aprovar",
-            lat: Number(lat),
-            lon: Number(lon),
+            lat: localizacao.lat,
+            lon: localizacao.lon,
             verificacao,
           },
         });
@@ -163,39 +163,9 @@ function CartaoRevisao({ ong, atualizar }) {
           {ong.status === "pendente" && (
             <div>
               <h3>Decidir cadastro</h3>
-              <p>
-                {ong.lat == null || ong.lon == null
-                  ? "Digite a latitude e a longitude conferidas no mapa. Os números em cinza nos campos são apenas exemplos."
-                  : "Coordenadas sugeridas pela busca do endereço no mapa. Confira a posição antes de aprovar."}
-              </p>
-              <div className="coordenadas-administracao">
-                <label className="campo">
-                  Latitude
-                  <input
-                    type="number"
-                    step="any"
-                    min="-4.1"
-                    max="-3.6"
-                    value={lat}
-                    onChange={(e) => definirLatitude(e.target.value)}
-                    placeholder="-3.73"
-                  />
-                </label>
-                <label className="campo">
-                  Longitude
-                  <input
-                    type="number"
-                    step="any"
-                    min="-38.8"
-                    max="-38.3"
-                    value={lon}
-                    onChange={(e) => definirLongitude(e.target.value)}
-                    placeholder="-38.52"
-                  />
-                </label>
-              </div>
+              <LocalizacaoRevisao lat={lat} lon={lon} alterar={(a, b) => { definirLatitude(a); definirLongitude(b); }} endereco={ong.endereco} ocupado={ocupado} />
               <label className="campo">
-                Verificação institucional
+                2. Verificação institucional
                 <select
                   value={verificacao}
                   onChange={(e) => definirVerificacao(e.target.value)}
@@ -208,14 +178,9 @@ function CartaoRevisao({ ong, atualizar }) {
                   </option>
                 </select>
               </label>
-              {(lat === "" || lon === "") && (
-                <p className="dica">
-                  Preencha os dois campos para liberar “Aprovar e publicar”.
-                </p>
-              )}
               <button
                 className="botao escuro"
-                disabled={ocupado || lat === "" || lon === ""}
+                disabled={ocupado || !localizacao.valida}
                 onClick={() => executar("aprovar")}
               >
                 Aprovar e publicar
@@ -305,6 +270,7 @@ export default function Administracao() {
             type="button"
             className={chave === situacao ? "ativo" : ""}
             onClick={() => {
+              if (chave === situacao) return;
               definirSituacao(chave);
               definirOngs(null);
             }}

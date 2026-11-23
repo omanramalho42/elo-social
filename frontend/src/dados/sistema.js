@@ -30,6 +30,8 @@ const grupos = {
     ["Remover projeto", "Exclusão de projeto com confirmação na interface.", "/painel/projetos", ["DELETE /api/painel/projetos/{id}"]],
   ],
   "Administração": [
+    ["Consultar equipe administrativa", "Lista restrita a administradores com nomes e e-mails da equipe.", "/admin", ["GET /api/admin/administradores"]],
+    ["Adicionar administrador", "Administrador concede acesso a uma conta confirmada sem ONG vinculada, mediante confirmação explícita.", "/admin", ["POST /api/admin/administradores"]],
     ["Filas de revisão", "Cadastros agrupados em verificação, aprovados e rejeitados.", "/admin", ["GET /api/admin/ongs"]],
     ["Conferir dados privados de cadastro", "Administrador consulta responsável e referências para a decisão.", "/admin", ["GET /api/admin/ongs"]],
     ["Preencher localização pelo endereço", "Busca automática de coordenadas, com mapa e campos editáveis para conferência. Endereços não encontrados exigem ajuste.", "/admin", ["GET /api/admin/ongs/{id}/localizacao", "PATCH /api/admin/ongs/{id}"]],

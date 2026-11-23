@@ -147,6 +147,7 @@ export const moderacaoSchema = z.discriminatedUnion("acao", [
 ]);
 
 export const gestorSchema = z.object({ email }).strict();
+export const novoAdministradorSchema = z.object({ email, confirmar: z.literal(true) }).strict();
 export const idSchema = z.coerce.number().int().positive().max(2_147_483_647);
 export const confirmarExclusaoSchema = z
   .object({ confirmar: z.literal(true) })

@@ -4,6 +4,7 @@ import { api } from "../api";
 import { formatarCnpj } from "../utilitarios/formatadores";
 import LocalizacaoRevisao from "../componentes/LocalizacaoRevisao";
 import { validarLocalizacao } from "../utilitarios/localizacao";
+import EquipeAdministrativa from "../componentes/EquipeAdministrativa";
 
 const situacoes = [
   ["pendente", "Em verificação"],
@@ -222,6 +223,7 @@ function CartaoRevisao({ ong, atualizar }) {
 }
 
 export default function Administracao() {
+  const [mostrarEquipe, definirMostrarEquipe] = useState(false);
   const [situacao, definirSituacao] = useState("pendente");
   const [ongs, definirOngs] = useState(null);
   const [erro, definirErro] = useState("");
@@ -265,10 +267,11 @@ export default function Administracao() {
             Confira as informações e decida quais cadastros serão publicados.
           </p>
         </div>
-        <button className="botao" onClick={sair}>
+        <div className="acoes-cabecalho"><button className="botao" aria-expanded={mostrarEquipe} onClick={() => definirMostrarEquipe(!mostrarEquipe)}>Administradores</button><button className="botao" onClick={sair}>
           Sair
-        </button>
+        </button></div>
       </div>
+      {mostrarEquipe && <EquipeAdministrativa />}
       <nav className="abas-painel" aria-label="Situação das ONGs">
         {situacoes.map(([chave, rotulo]) => (
           <button

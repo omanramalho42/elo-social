@@ -85,6 +85,12 @@ export const openapi = {
   ],
 
   paths: {
+    "/api/admin/administradores": {
+      get: { tags: ["Administração"], summary: "Listar administradores da equipe", security: sessao, responses: { "200": { description: "Nomes e e-mails dos administradores" }, "401": erro("Sessão necessária"), "403": erro("Somente administrador") } },
+      post: { tags: ["Administração"], summary: "Adicionar administrador a partir de conta confirmada sem ONG", security: sessao,
+        requestBody: { required: true, content: { "application/json": { schema: { type: "object", additionalProperties: false, required: ["email", "confirmar"], properties: { email: { type: "string", format: "email" }, confirmar: { type: "boolean", enum: [true] } } } } } },
+        responses: { "201": { description: "Acesso administrativo concedido" }, "401": erro("Sessão necessária"), "403": erro("Somente administrador"), "404": erro("Conta inexistente"), "409": erro("Conta já administradora ou vinculada a ONG"), "422": erro("E-mail não confirmado ou dados inválidos") } },
+    },
     "/api/admin/ongs/{id}/localizacao": {
       get: {
         tags: ["Administração"],

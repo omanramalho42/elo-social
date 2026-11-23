@@ -1,4 +1,20 @@
 :root { color-scheme: light; }
+.lista-mapa { scrollbar-width: thin; scrollbar-color: #a2af98 transparent; scrollbar-gutter: stable; }
+.lista-mapa::-webkit-scrollbar { width: 6px; }
+.lista-mapa::-webkit-scrollbar-track { background: transparent; }
+.lista-mapa::-webkit-scrollbar-thumb { background: #a2af98; border-radius: 12px; }
+.lista-mapa::-webkit-scrollbar-thumb:hover { background: #74886a; }
+.lista-mapa::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+:root[data-tema="escuro"] .lista-mapa { scrollbar-color: #71846b transparent; }
+:root[data-tema="escuro"] .lista-mapa::-webkit-scrollbar-thumb { background: #71846b; }
+@supports selector(::-webkit-scrollbar) {
+  .lista-mapa, :root[data-tema="escuro"] .lista-mapa { scrollbar-width: auto; scrollbar-color: auto; }
+}
+.confirmacao-equipe { display: flex; align-items: start; gap: 10px; font-size: 13px; line-height: 1.6; margin-bottom: 18px; }
+.confirmacao-equipe input { width: auto; margin-top: 4px; flex-shrink: 0; }
+.lista-equipe { list-style: none; padding: 0; }
+.lista-equipe li { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; }
+.lista-equipe span { color: var(--muted); overflow-wrap: anywhere; }
 :root[data-tema="escuro"] {
   color-scheme: dark;
   --fundo-pagina: #151c18;

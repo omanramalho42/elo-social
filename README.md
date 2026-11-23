@@ -111,6 +111,8 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 
 ## Funcionalidades
 
+Para adicionar membros à equipe, acesse **Administração → Administradores**. O novo membro cria sua própria conta e confirma o e-mail; depois, um administrador concede o acesso. Use uma conta sem ONG vinculada. Detalhes em [docs/EQUIPE-ADMINISTRATIVA.md](docs/EQUIPE-ADMINISTRATIVA.md). Mensageria e notificações ainda não foram implementadas.
+
 - Mapa de Fortaleza com marcadores e acesso aos perfis.
 - Catálogo com busca por nome, bairro e área de atuação.
 - Perfil público com informações, contato e projetos.

@@ -1,0 +1,68 @@
+:root { color-scheme: light; }
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo-pagina: #151c18;
+  --superficie: #1e2821;
+  --superficie-suave: #29362c;
+  --superficie-destaque: #304331;
+  --texto: #eef4e9;
+  --texto-suave: #b2c0ad;
+  --texto-destaque: #cbdfba;
+  --line: #425246;
+  --linha-alternativa: #425246;
+  --muted: #b2c0ad;
+  --dark: #eef4e9;
+  --foco: #c4dda8;
+  --sucesso-fundo: #293e2c;
+  --sucesso-texto: #c1e0ac;
+  --erro-fundo: #3d2825;
+  --erro-texto: #ffb8a6;
+  --erro-borda: #a26b5c;
+  --aviso-texto: #efd59e;
+  --info-texto: #b4cdff;
+  --mapa-fundo: #24322c;
+}
+.acoes-cabecalho { display: flex; align-items: center; gap: 10px; }
+.botao.botao-tema { gap: 8px; padding: 10px 12px; min-height: 40px; white-space: nowrap; color: inherit; font-size: 12px; }
+.botao-tema svg { flex-shrink: 0; }
+:root[data-tema="escuro"] .botao.escuro { background: #d7e4c7; color: #1c251f; border-color: #d7e4c7; }
+:root[data-tema="escuro"] .botao.escuro:hover { background: #c1d6aa; }
+:root[data-tema="escuro"] .botao-tema { border-color: #8ca17e; }
+:root[data-tema="escuro"] ::selection { background: #d7e4c7; color: #1c251f; }
+:root[data-tema="escuro"] input::placeholder,
+:root[data-tema="escuro"] textarea::placeholder { color: #a3b09d; opacity: 1; }
+:root[data-tema="escuro"] input:-webkit-autofill { -webkit-text-fill-color: #eef4e9; box-shadow: 0 0 0 1000px #1e2821 inset; }
+:root[data-tema="escuro"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.88); }
+:root[data-tema="escuro"] .leaflet-container { background: #24322c; }
+:root[data-tema="escuro"] .logo-instituicao { background: #fff; }
+:root[data-tema="escuro"] .leaflet-popup-content-wrapper,
+:root[data-tema="escuro"] .leaflet-popup-tip,
+:root[data-tema="escuro"] .leaflet-bar a,
+:root[data-tema="escuro"] .leaflet-control-attribution { background: #1e2821; color: #eef4e9; }
+:root[data-tema="escuro"] .leaflet-bar a:hover { background: #304331; }
+:root[data-tema="escuro"] .leaflet-control-attribution a { color: #cbdfba; }
+:root[data-tema="escuro"] .leaflet-container a.leaflet-popup-close-button { color: #cbdfba; }
+:root[data-tema="escuro"] .saude-indice nav,
+:root[data-tema="escuro"] .saude-tabela { scrollbar-color: #73886b #1e2821; }
+@media (max-width: 760px) {
+  .botao-tema .rotulo-tema { display: none; }
+  .botao.botao-tema { padding: 10px; width: 40px; height: 40px; }
+  .acoes-cabecalho .pequeno > span { display: none; }
+}
+@media (max-width: 780px) {
+  .cabecalho { height: auto; }
+  .conteudo-cabecalho { flex-wrap: wrap; padding-block: 15px; gap: 16px; }
+  .cabecalho nav { order: 3; width: 100%; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 8px; }
+}
+@media (max-width: 380px) {
+  .conteudo-cabecalho { padding-inline: 16px; gap: 10px; }
+  .cabecalho .marca { font-size: 19px; gap: 6px; }
+  .cabecalho .marca svg { width: 26px; height: 26px; }
+  .acoes-cabecalho { gap: 7px; }
+  .acoes-cabecalho .pequeno > span { display: none; }
+  .acoes-cabecalho .botao.pequeno { font-size: 10px; padding: 10px 8px; gap: 0; }
+  .saude-cabecalho { padding-inline: 14px; gap: 10px; }
+  .saude-cabecalho .marca { font-size: 18px; gap: 6px; }
+  .saude-cabecalho .marca svg { display: none; }
+  .saude-cabecalho > div { gap: 8px; }
+}

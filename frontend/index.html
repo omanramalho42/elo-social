@@ -9,6 +9,15 @@
       content="Encontre ONGs e projetos sociais em Fortaleza. Conheça iniciativas, explore o mapa e ajude a ampliar essa rede."
     />
     <title>EloSocial · Conexões que aproximam</title>
+    <script>
+      document.documentElement.dataset.tema = "claro";
+      try {
+        if (localStorage.getItem("elosocial-tema") === "escuro")
+          document.documentElement.dataset.tema = "escuro";
+      } catch { /* O tema claro funciona sem armazenamento. */ }
+      document.querySelector('meta[name="theme-color"]').content =
+        document.documentElement.dataset.tema === "escuro" ? "#151c18" : "#fafbf8";
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -120,6 +120,7 @@ As instruções para preparar as contas de demonstração estão em `backend/sup
 - Painel administrativo para aprovar ou rejeitar ONGs e vincular gestores em cadastros antigos.
 - Busca automática de coordenadas pelo endereço no painel administrativo, com conferência e ajuste no mapa.
 - Painel técnico em `/health`, acessível por **Shift + S** fora dos campos de digitação: disponibilidade, deploys, arquitetura, catálogo de funções, rotas, integrações e estrutura do banco.
+- Botão de modo escuro ao lado do acesso à conta, com preferência salva no navegador e aplicada também aos formulários, mapa e painel técnico.
 
 A solicitação de inclusão exige uma conta confirmada e aberta. A ONG é vinculada automaticamente ao gestor e aparece no painel como **Em verificação**. A equipe decide no painel `/admin` se publica ou rejeita a ONG.
 

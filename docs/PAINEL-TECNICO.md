@@ -2,7 +2,7 @@
 
 Acesse `/health` na interface ou pressione **Shift + S** fora de campos de digitação. O atalho não intercepta edição de texto, composição de caracteres ou combinações com Ctrl, Alt e Meta. Há navegação por seções e filtros por função, área da aplicação, operação e método HTTP.
 
-O painel reúne 39 funcionalidades numeradas em cinco grupos e as 27 operações HTTP documentadas, incluindo a consulta de localização. Identifica recursos que existem somente na API. A numeração é um identificador, não uma pontuação de qualidade nem uma comprovação de teste funcional. O inventário online deriva do OpenAPI do backend. Quando a consulta falha, o catálogo local permanece acessível e é identificado como referência do código.
+O painel reúne 40 funcionalidades numeradas em cinco grupos e as 27 operações HTTP documentadas, incluindo a consulta de localização. Identifica recursos que existem somente na API. A numeração é um identificador, não uma pontuação de qualidade nem uma comprovação de teste funcional. O inventário online deriva do OpenAPI do backend. Quando a consulta falha, o catálogo local permanece acessível e é identificado como referência do código.
 
 ## Consulta de disponibilidade
 

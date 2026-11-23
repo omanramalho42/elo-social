@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Marca } from "../componentes/Comum";
 import { funcionalidades, gruposFuncionais, integrarTexto, integracoes, tabelas } from "../dados/sistema";
 import "./Saude.css";
+import BotaoTema from "../componentes/BotaoTema";
 
 const build = __ELOSOCIAL_BUILD__;
 const secoes = [["visao-geral", "Disponibilidade"], ["publicacoes", "Deploys"], ["arquitetura", "Arquitetura"], ["funcoes", "Funcionalidades"], ["rotas", "Rotas da API"], ["integracoes", "Integrações"], ["banco", "Banco e segurança"]];
@@ -61,7 +62,7 @@ export default function Saude() {
   const listaRotas = inventario.filter((r) => (!metodo || r.metodo === metodo) && integrarTexto(`${r.metodo} ${r.caminho} ${r.resumo} ${r.acesso}`).includes(integrarTexto(buscaRotas)));
   const resumo = carregando ? "Consultando os serviços…" : erro ? "Diagnóstico indisponível" : dados?.situacao === "ok" ? "Serviços responderam à consulta" : "Uma dependência precisa de atenção";
   return <div className="pagina-saude">
-    <header className="saude-cabecalho"><Marca /><div><span className="saude-atalho"><kbd>Shift</kbd> + <kbd>S</kbd></span><Link className="botao" to="/">Voltar ao site</Link></div></header>
+    <header className="saude-cabecalho"><Marca /><div><span className="saude-atalho"><kbd>Shift</kbd> + <kbd>S</kbd></span><BotaoTema /><Link className="botao" to="/">Voltar ao site</Link></div></header>
     <div className="saude-layout">
       <aside className="saude-indice"><p>Informações do sistema</p><nav aria-label="Seções do diagnóstico">{secoes.map(([id, nome]) => <a href={`#${id}`} key={id}>{nome}</a>)}</nav><p className="saude-nota">Documentação do código<br />e consulta em tempo real.</p></aside>
       <div className="saude-corpo">

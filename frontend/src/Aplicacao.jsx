@@ -11,6 +11,7 @@ import ConfirmarEmail from "./paginas/ConfirmarEmail";
 import Administracao from "./paginas/Administracao";
 import Saude from "./paginas/Saude";
 import { deveAbrirSaude } from "./utilitarios/atalhos";
+import BotaoTema from "./componentes/BotaoTema";
 
 // Esta estrutura reúne o cabeçalho, o rodapé e as rotas da interface.
 export default function Aplicacao() {
@@ -76,6 +77,8 @@ export default function Aplicacao() {
             <NavLink to="/catalogo">Catálogo</NavLink>
             {mostrarCadastro && <NavLink to="/solicitar">Cadastrar ONG</NavLink>}
           </nav>
+          <div className="acoes-cabecalho">
+          <BotaoTema />
           <Link
             className="botao escuro pequeno"
             to={
@@ -93,6 +96,7 @@ export default function Aplicacao() {
                 : "Área da ONG"}{" "}
             <span>↗</span>
           </Link>
+          </div>
         </div>
       </header>}
       <main id="conteudo">

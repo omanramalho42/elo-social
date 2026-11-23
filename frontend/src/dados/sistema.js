@@ -47,6 +47,7 @@ const grupos = {
     ["Swagger UI", "Documentação interativa no backend. Operações de escrita precisam de sessão e origem permitida.", "/docs", []],
     ["Atalho Shift + S", "Abre este painel fora de campos de digitação; não envia requisições de escrita.", "/health", []],
     ["Página não encontrada", "Rotas desconhecidas exibem orientação para voltar ao mapa.", "/*", []],
+    ["Modo escuro", "Alternância no cabeçalho, com preferência salva no navegador e aplicada às telas, formulários e mapa.", "/", []],
   ],
 };
 

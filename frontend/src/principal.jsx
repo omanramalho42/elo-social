@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import Aplicacao from "./Aplicacao";
 import "./estilos.css";
 import "leaflet/dist/leaflet.css";
+import "./temas.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
